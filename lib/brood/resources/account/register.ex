@@ -22,7 +22,9 @@ defmodule Brood.Resource.Account.Register do
       |> Router.response_body(account |> Account.cleanse)
       |> Router.respond(state)
     else
-       {:error, %Mongo.Error{code: 11000}} -> :email_taken
+       {:error, %Mongo.Error{code: 11000} = er} ->
+         Logger.error("#{inspect er}")
+         :email_taken
     end
 
   end

@@ -1,6 +1,7 @@
 import { Provider } from 'preact-redux';
 import store from './store';
 import App from './components/app';
+import * as cs  from 'd3-scale-chromatic';
 import * as actions from './actions';
 import './style';
 

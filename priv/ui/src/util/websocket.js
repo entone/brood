@@ -59,7 +59,7 @@ function connect_handler(e){
   }, 23000);
   console.log("WS connected");
   console.log(e);
-  authorize()
+  authorize();
 }
 
 function close_handler(e){

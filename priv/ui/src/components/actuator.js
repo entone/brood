@@ -3,7 +3,7 @@ import Card from 'preact-material-components/Card';
 import 'preact-material-components/Card/style.css';
 import Switch from 'preact-material-components/Switch';
 import 'preact-material-components/Switch/style.css';
-import { sendAction } from '../actions';
+import { sendMessage } from '../actions';
 import store from '../store';
 
 
@@ -11,7 +11,7 @@ export default class Actuator extends Component {
 
   switch = () => {
     var effect = this.props.value == 0 ? 1 : 0;
-    store.dispatch(sendAction(this.props.name, effect));
+    store.dispatch(sendMessage("actuator", this.props.name, effect));
   }
 
   render = ({ value, title, name, color }) => {

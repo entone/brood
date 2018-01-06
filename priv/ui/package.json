@@ -1,5 +1,5 @@
 {
-  "name": "rosetta_home",
+  "name": "Harvest2.0",
   "version": "1.0.0",
   "description": "Websocket interface for hardware",
   "scripts": {
@@ -33,10 +33,14 @@
     "d3-scale-chromatic": "^1.1.1",
     "d3-selection": "^1.2.0",
     "d3-transition": "^1.1.1",
+    "pinkie-promise": "git+https://github.com/floatdrop/pinkie-promise.git",
     "preact": "^8.1.0",
+    "preact-compat": "^3.17.0",
     "preact-material-components": "^1.2.4",
     "preact-redux": "^1.2.0",
+    "react-toolbox": "^2.0.0-beta.12",
     "reconnecting-websocket": "^3.2.2",
-    "redux": "^3.6.0"
+    "redux": "^3.6.0",
+    "require-from-string": "https://github.com/floatdrop/require-from-string/tarball/v1.1.0"
   }
 }

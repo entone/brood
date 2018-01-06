@@ -4,7 +4,6 @@ import Header from './header';
 import Home from '../routes/home';
 import Login from '../routes/login';
 import Register from '../routes/register';
-import Profile from '../routes/profile';
 import { updateData } from '../actions';
 import store from '../store';
 
@@ -32,16 +31,6 @@ export default class App extends Component {
 	handleRoute = e => {
 		this.currentUrl = e.url;
 	};
-
-	componentDidMount = () => {
-		this.interval = setInterval(() => {
-			store.dispatch(updateData());
-		}, 500);
-	};
-
-	componentWillUnmount = () => {
-		clearInterval(this.interval);
-	}
 
 	render = () => {
 		return (

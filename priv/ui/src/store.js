@@ -1,6 +1,6 @@
 import { createStore, applyMiddleware } from 'redux';
 import * as types from './types';
-import { sendAction, authenticated } from './actions';
+import { sendMessage } from './actions';
 import { emit } from './util/websocket'
 import { num_data_points } from './common/config'
 
@@ -10,9 +10,18 @@ let ACTIONS = {
     var authed = {authenticated: token}
     return Object.assign(state, authed);
   },
+
   SEND_MESSAGE: ({...state}, {id, message, payload}) => {
+    var update = {}
+    switch(message){
+      case "actuator":
+        update[id] = payload;
+        break;
+      default:
+        break;
+    }
 		emit({type: message, id: id, payload: payload});
-		return state
+		return Object.assign(state, update);
   },
 
   ACTION: function({...state}, {action, payload}){
@@ -26,41 +35,36 @@ let ACTIONS = {
     return state;
   },
 
-	DATA_POINT: function({...state}, msg){
-    msg.timestamp = new Date();
-    var type = msg.data_point.type;
-    var id = msg.data_point.interface_pid;
-    var dps = state[type][id] || [];
-    var data_points = [...dps, msg];
-		if(data_points.length > num_data_points) data_points = data_points.slice(1, num_data_points+1);
-    var obj = JSON.parse(JSON.stringify(state));
-    obj[type][id] = data_points;
-		return obj;
+	DATA_POINT: function({...state}, data_point){
+		var obj = {};
+		if(state[data_point.data_point.key] instanceof Array){
+			obj[data_point.data_point.key] = [...state[data_point.data_point.key], data_point];
+			if(obj[data_point.data_point.key].length > num_data_points){
+				obj[data_point.data_point.key] = obj[data_point.data_point.key].slice(1, num_data_points+1);
+			}
+		}else{
+			obj[data_point.data_point.key] = data_point.data_point.value
+		}
+		return Object.assign(state, obj);
   },
-
-  UPDATE_DATA: function({...state}, data){
-    for(var type in state){
-      if(type != "authenticated"){
-        var t = state[type];
-        for(var device in t){
-          var d = t[device];
-          var dp = JSON.parse(JSON.stringify(d[d.length-1]));
-          dp.timestamp = new Date();
-          d.push(dp);
-          if(d.length > num_data_points) d = d.slice(1, num_data_points+1);
-        }
-      }
-    }
-    return JSON.parse(JSON.stringify(state));
-  }
 
 };
 
 const INITIAL = {
-	hvac: {},
-  ieq: {},
-  weather_station: {},
-  smart_meter: {},
+	humidity: [],
+	temperature: [],
+	water_level_lower: [],
+	water_level_upper: [],
+  ph: [],
+  ec: [],
+  water_temperature: [],
+  doxy: [],
+	light_lower: 0,
+	light_upper: 0,
+	pump_upper: 0,
+	pump_lower: 0,
+	dose_upper: 0,
+	dose_lower: 0,
   authenticated: false,
 };
 

@@ -9,51 +9,35 @@ import { num_data_points } from '../common/config'
 export default class RealtimeGraph extends Component {
 
   shouldComponentUpdate = ({...state}) => {
-    var list = state[this.props.type][this.props.name];
-    this.x.domain([new Date(list[0].timestamp), new Date(list[list.length-1].timestamp)]);
-    var max_v = 0;
-    var min_v = 99999;
-    for(var line in this.groups){
-      var group = this.groups[line];
-      var maxv = d3.max(list, (d) => (d.data_point.state[line]));
-      max_v = Math.max(max_v, maxv);
-      var minv = d3.min(list, (d) => (d.data_point.state[line]));
-      min_v = Math.min(min_v, minv);
-      var data = [];
-      for(var d = 0; d < list.length; d++ ){
-        data.push({value: list[d].data_point.state[line], timestamp: list[d].timestamp});
-      }
-      group.path.data([data]).attr('d', this.line);
+    var data = state[this.props.name]
+    var maxv = d3.max(data, (d) => {
+      return typeof d.data_point.value == "object" ? d.data_point.value[this.props.graph_var] : d.data_point.value
+    });
+    this.y.domain([maxv/2, maxv]);
+    for (var name in this.groups) {
+      var group = this.groups[name]
+      group.path.data([state[this.props.name]]).attr('d', this.line)
     }
-    this.y.domain([min_v/2, max_v]);
-    this.axis.call(this.x_axis);
-    this.axis.selectAll(".tick text")
-      .attr("fill", this.props.color(.5))
-      this.axis.selectAll(".tick line")
-        .attr("stroke", this.props.color(.5))
     return false;
   }
 
   componentDidMount = ({...state}) => {
-    this.groups = {}
-    for(var line = 0; line < this.props.graph_var.length; line++){
-      var attr = this.props.graph_var[line];
-      this.groups[attr] = {
+    this.groups = {
+      current: {
         value: 0,
-        color: this.props.color(.3*line),
-        attr: attr,
+        color: this.props.color(1),
         data: this.props.list
       }
-    }
+    };
     this.width = document.getElementById(this.props.name).clientWidth;
     var limit = 60 * 1,
       duration = 750,
       now = new Date(Date.now() - duration)
     var width = this.width;
-    var height = 50;
+    var height = 20;
 
-    this.x = d3.scaleTime()
-      .domain([new Date(2017, 11, 7), new Date()])
+    this.x = d3.scaleLinear()
+      .domain([0, num_data_points])
       .range([0, width]);
 
     this.y = d3.scaleLinear()
@@ -61,21 +45,26 @@ export default class RealtimeGraph extends Component {
       .range([height, 0])
 
     this.line = d3.line()
-      .x((d) => this.x(new Date(d.timestamp)))
-      .y((d) => this.y(d.value))
+      .x((d, i) => {
+        return this.x(i)
+      })
+      .y((d) => {
+        var v = typeof d.data_point.value == "object" ? d.data_point.value[this.props.graph_var] : d.data_point.value
+        return this.y(v);
+      })
 
     var svg = d3.select('#'+this.props.name+'-svg')
       .attr('class', 'chart')
       .attr('width', width)
       .attr('height', height + 35)
 
-    this.x_axis = d3.axisBottom(this.x)
-      .ticks(5);
+    //var x_axis = d3.axisBottom(this.x)
+    //  .ticks(5);
 
-    this.axis = svg.append('g')
-      .attr('class', 'x axis')
-      .attr('transform', 'translate(0,' + height + ')')
-      .call(this.x_axis);
+    //var axis = svg.append('g')
+    //  .attr('class', 'x axis')
+    //  .attr('transform', 'translate(0,' + height + ')')
+    //  .call(x_axis);
 
     var paths = svg.append('g');
 
@@ -88,7 +77,7 @@ export default class RealtimeGraph extends Component {
     }
   };
 
-  render = ({list, type, name, color, graph_var}) => {
+  render = ({list, name, graph_var, color}) => {
     return (
       <svg id={name+"-svg"}></svg>
     );

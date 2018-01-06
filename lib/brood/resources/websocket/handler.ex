@@ -93,6 +93,11 @@ defmodule Brood.Resource.WebSocket.Handler do
     {%Message{mes | type: @pong, payload: %{ok: :yes}}, state}
   end
 
+  def handle_message(%Message{type: "actuator"} = message, state) do
+    state.node |> Brood.NodeCommunicator.request(message)
+    {%Message{message | payload: %{success: true}}, state}
+  end
+
   def handle_message(%Message{type: @configure_touchstone} = mes, state) do
     state.node |> Brood.NodeCommunicator.request(mes)
     {%Message{mes | type: @configuration_state, payload: %{current_id: 1}}, state}

@@ -10,5 +10,7 @@ export default function (config, env, helpers) {
   if(process.env.NODE_ENV != 'development'){
     config.output.publicPath = '/build/';
   }
+  config.resolve.alias['react'] = 'preact-compat';
+  config.resolve.alias['react-dom'] = 'preact-compat';
   return config;
 }

@@ -18,11 +18,6 @@ config :brood, Brood.DB.InfluxDB,
   scheme:    "http",
   writer:    Instream.Writer.Line
 
-config :satori,
-  url: "wss://open-data.api.satori.com/v2",
-  app_key: System.get_env("SATORI_APP_KEY"),
-  role_secret: System.get_env("SATORI_ROLE_SECRET")
-
 config :guardian, Guardian,
   allowed_algos: ["HS512"],
   verify_module: Guardian.JWT,
