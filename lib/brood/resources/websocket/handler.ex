@@ -125,7 +125,10 @@ defmodule Brood.Resource.WebSocket.Handler do
   end
 
   def websocket_terminate(_reason, req, state) do
-    Process.exit(state.node, :kill)
+    case state.node do
+      nil -> nil
+      _ -> Process.exit(state.node, :kill)
+    end
     :ok
   end
 end
