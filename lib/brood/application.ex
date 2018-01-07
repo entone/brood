@@ -5,7 +5,7 @@ defmodule Brood.Application do
 
   @mongo_database Application.get_env(:brood, :mongo_database)
   @mongo_host Application.get_env(:brood, :mongo_host)
-  @http_port Application.get_env(:brood, :http_port)
+  @http_port Application.get_env(:brood, :http_port) |> String.to_integer()
   #@account_collection Application.get_env(:brood, :account_collection)
 
   def start(_type, _args) do
