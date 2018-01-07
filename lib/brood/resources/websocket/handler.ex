@@ -12,6 +12,8 @@ defmodule Brood.Resource.WebSocket.Handler do
   @configuration_state "configuration_state"
   @touchstone_name "touchstone_name"
   @touchstone_saved "touchstone_saved"
+  @client_closed  "client_closed"
+  @client_open  "client_open"
   @pong "pong"
 
   defmodule Message do
@@ -55,6 +57,7 @@ defmodule Brood.Resource.WebSocket.Handler do
             |> Account.cleanse
             |> IO.inspect
           {:ok, node} = Brood.NodeCommunicator.start_link(self(), account.kit_id)
+          Process.send_after(self(), :open, 100)
           state = %State{state | authenticated: true, account: account, node: node}
           {%Message{type: @authentication, payload: state}, state}
         {:error, reason} ->
@@ -120,6 +123,12 @@ defmodule Brood.Resource.WebSocket.Handler do
     {:reply, {:text, message |> Poison.encode!}, req, state}
   end
 
+  def websocket_info(:open, req, state) do
+    state.node |> Brood.NodeCommunicator.request(%Message{type: @client_open})
+    Process.send_after(self(), :open, 5000)
+    {:ok, req, state}
+  end
+
   def websocket_info({:image, message}, req, state) do
     {:reply, {:binary, message}, req, state}
   end
@@ -127,7 +136,10 @@ defmodule Brood.Resource.WebSocket.Handler do
   def websocket_terminate(_reason, req, state) do
     case state.node do
       nil -> nil
-      _ -> Process.exit(state.node, :kill)
+      _ ->
+        state.node |> Brood.NodeCommunicator.request(%Message{type: @client_closed})
+        :timer.sleep(1000)
+        Process.exit(state.node, :kill)
     end
     :ok
   end
