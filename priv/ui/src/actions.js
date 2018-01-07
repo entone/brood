@@ -1,4 +1,3 @@
-
 import * as types from './types'
 
 export function login(email, password){
@@ -34,6 +33,13 @@ export function sendMessage(type, id, payload) {
 		type: types.SEND_MESSAGE,
 		id: id,
 		message: type,
+		payload: payload
+	};
+}
+
+export function receiveImage(payload) {
+	return {
+		type: types.RECEIVE_IMAGE,
 		payload: payload
 	};
 }

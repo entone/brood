@@ -5,7 +5,7 @@ defmodule Brood.NodeCommunicator do
   @host Application.get_env(:brood, :mqtt_host)
   @port Application.get_env(:brood, :mqtt_port)
 
-  @end_points ["request", "response", "point"]
+  @end_points ["request", "response", "point", "image"]
 
   defmodule State do
     defstruct [:id, :parent]
@@ -35,19 +35,25 @@ defmodule Brood.NodeCommunicator do
     {:ok, state}
   end
 
-  def on_publish(["node", client, "response"], message, %State{id: id} = state) when client ==  id do
+  def on_publish(["node", client, "response"], message, %State{id: id} = state) when client == id do
     Logger.info "#{client} Response Received: #{inspect message}"
     {:ok, state}
   end
 
-  def on_publish(["node", client, "request"], message, %State{id: id} = state) when client ==  id do
+  def on_publish(["node", client, "request"], message, %State{id: id} = state) when client == id do
     Logger.info "#{client} Request Sent: #{inspect message}"
     {:ok, state}
   end
 
-  def on_publish(["node", client, "point"], message, %State{id: id} = state) when client ==  id do
-    Logger.info "#{client} Data Point Received: #{inspect message}"
-    send(state.parent, message |> Poison.decode!)
+  def on_publish(["node", client, "point"], message, %State{id: id} = state) when client == id do
+    #Logger.debug "#{client} Data Point Received: #{inspect message}"
+    send(state.parent, {:point, message |> Poison.decode!})
+    {:ok, state}
+  end
+
+  def on_publish(["node", client, "image"], message, %State{id: id} = state) when client == id do
+    #Logger.debug "#{client} Image Received: #{inspect message}"
+    send(state.parent, {:image, message})
     {:ok, state}
   end
 

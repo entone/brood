@@ -43,11 +43,13 @@ html, body{
 	background-color: rgb(200, 200, 200);
 }
 
-.card-stream{
-	height: 200px;
-	background-image: url("/video.mjpeg");
-	background-repeat: no-repeat;
-	background-size: cover;
+.camera-image{
+	width: 100%;
+	height: auto;
+}
+
+.mdc-card__media.image{
+	padding: 4px;
 }
 
 #app {

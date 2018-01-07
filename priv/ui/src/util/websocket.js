@@ -1,4 +1,4 @@
-import { receiveAction, receiveDataPoint, receiveData } from '../actions';
+import { receiveAction, receiveDataPoint, receiveData, receiveImage } from '../actions';
 import * as types from '../types';
 import store from '../store';
 import { host } from '../common/config'
@@ -32,6 +32,14 @@ function message_handler(message){
   try{
     data_p = JSON.parse(message.data);
   }catch(e){
+    try{
+      var r = new FileReader();
+      r.readAsBinaryString(message.data);
+      r.onloadend = () => {
+        var image = r.result;
+        store.dispatch(receiveImage(image));
+      }
+    }catch(e){}
     data_p = {type: "NULL"};
   }
   switch(data_p.type){

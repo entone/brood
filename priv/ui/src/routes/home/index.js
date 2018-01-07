@@ -67,7 +67,7 @@ export default class Home extends Component {
     </LayoutGrid.Cell>
   );
 
-  camera = (color) => (
+  camera = (color, state) => (
     <LayoutGrid.Cell cols="3" desktopCols="3" tabletCols="2" phoneCols="4">
       <Elevation z={6}>
         <Card style={{"background-color":color(.2)}}>
@@ -76,7 +76,9 @@ export default class Home extends Component {
               Camera
             </Card.Title>
           </Card.Primary>
-          <Card.Media className='card-stream'></Card.Media>
+          <Card.Media className="image">
+            <img className="camera-image" src={"data:image/png;base64," + window.btoa(state.image)} />
+          </Card.Media>
         </Card>
       </Elevation>
     </LayoutGrid.Cell>
@@ -114,7 +116,7 @@ export default class Home extends Component {
             { this.sensor_card("Water Level Lower", state.water_level_lower, "water_level_lower", "water_level_lower", this.hues[1])}
             { this.sensor_card("Temperature", state.temperature, "temperature", "temperature", this.hues[2]) }
             { this.sensor_card("Humidity", state.humidity, "humidity", "humidity", this.hues[3]) }
-            { this.camera(this.hues[7]) }
+            { this.camera(this.hues[7], state) }
             { this.actuator_group("Pumps", "pump", this.hues[7], state)}
             { this.actuator_group("Lights", "light", this.hues[7], state)}
             { this.actuator_group("Dose", "dose", this.hues[7], state)}

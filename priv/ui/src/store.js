@@ -7,8 +7,13 @@ import { num_data_points } from './common/config'
 
 let ACTIONS = {
   AUTHENTICATED: ({...state}, {token}) => {
-    var authed = {authenticated: token}
+    var authed = {authenticated: token};
     return Object.assign(state, authed);
+  },
+
+  IMAGE: ({...state}, {payload}) => {
+    var update = {image: payload};
+    return Object.assign(state, update);
   },
 
   SEND_MESSAGE: ({...state}, {id, message, payload}) => {
@@ -65,6 +70,7 @@ const INITIAL = {
 	pump_lower: 0,
 	dose_upper: 0,
 	dose_lower: 0,
+  image: null,
   authenticated: false,
 };
 

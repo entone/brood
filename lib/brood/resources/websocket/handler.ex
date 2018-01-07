@@ -115,9 +115,13 @@ defmodule Brood.Resource.WebSocket.Handler do
     {:shutdown, req, state}
   end
 
-  def websocket_info(message, req, state) do
+  def websocket_info({:point, message}, req, state) do
     dp = message |> Map.drop([:device_pid, :histogram, :timer])
     {:reply, {:text, message |> Poison.encode!}, req, state}
+  end
+
+  def websocket_info({:image, message}, req, state) do
+    {:reply, {:binary, message}, req, state}
   end
 
   def websocket_terminate(_reason, req, state) do
