@@ -8,7 +8,7 @@ config :brood,
   mongo_database: "brood",
   mqtt_host: "vernemq",
   mqtt_port: 4883,
-  http_port: System.get_env("INTERFACE_PORT") || "8080",
+  http_port: System.get_env("INTERFACE_PORT"),
   account_collection: "accounts"
 
 config :brood, Brood.DB.InfluxDB,
