@@ -36,7 +36,10 @@ defmodule CertTest.Mixfile do
       {:jose, "~> 1.8"},
       {:cors_plug, "~> 1.3"},
       {:tzdata, "~> 0.5.12"},
-      {:timex, "~> 3.1"}
+      {:timex, "~> 3.1"},
+      {:acme, "~> 0.5.1"},
+      {:hackney, "~> 1.8.6", override: true},
+      {:quantum, "~> 2.2"}
     ]
   end
 end

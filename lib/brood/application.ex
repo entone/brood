@@ -12,10 +12,11 @@ defmodule Brood.Application do
     http_port = (Application.get_env(:brood, :http_port) || "8080") |> String.to_integer()
     children = [
       Brood.DB.InfluxDB.child_spec,
-      Plug.Adapters.Cowboy.child_spec(:http, Brood.HTTPRouter, [], [port: http_port, dispatch: dispatch()]),
       supervisor(Task.Supervisor, [[name: Brood.TaskSupervisor]]),
       worker(Mongo, [[name: :mongo_brood, hostname: @mongo_host, database: @mongo_database, pool: DBConnection.Poolboy]]),
+      worker(Brood.WebWorker, []),
       worker(Brood.MQTTHandler, []),
+      worker(Brood.Scheduler, [])
     ]
     opts = [strategy: :one_for_one, name: Brood.Supervisor]
     Supervisor.start_link(children, opts) |> create_influx_db |> create_mongo_db

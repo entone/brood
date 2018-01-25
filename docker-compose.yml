@@ -49,6 +49,8 @@ services:
     build: .
     logging:
       driver: syslog
+    volumes:
+      - ./priv/ssl:/etc/ssl/brood
     depends_on:
       - vernemq
       - influxdb
@@ -57,8 +59,10 @@ services:
       - brood-${ENV}.env
     ports:
       - "4001:4001"
-      - "8080:8080"
+      - "443:443"
       - "80:80"
+      - "8443:8443"
+      - "8080:8080"
 
 
 volumes:
