@@ -1,6 +1,4 @@
 import { h, Component } from 'preact';
-import Card from 'preact-material-components/Card';
-import 'preact-material-components/Card/style.css';
 import Switch from 'preact-material-components/Switch';
 import 'preact-material-components/Switch/style.css';
 import { sendMessage } from '../actions';

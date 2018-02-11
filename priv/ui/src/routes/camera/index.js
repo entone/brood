@@ -4,19 +4,18 @@ import { connect } from 'preact-redux';
 import BasePage from '../../components/base_page';
 import LayoutGrid from 'preact-material-components/LayoutGrid';
 import 'preact-material-components/LayoutGrid/style.css';
+import camera from '../../components/camera';
 import style from './style';
 
 @connect(reduce, actions)
-export default class Home extends BasePage {
+export default class Camera extends BasePage {
 
 	render = ({ ...state }, { text }) => {
 		return (
-      <div className="homepage page" >
+      <div className="camera page" >
         <LayoutGrid>
           <LayoutGrid.Inner>
-            <LayoutGrid.Cell cols="12" desktopCols="12" tabletCols="8" phoneCols="4">
-              Welcome Home!
-            </LayoutGrid.Cell>
+            { camera(this.hues[7], state) }
           </LayoutGrid.Inner>
         </LayoutGrid>
       </div>

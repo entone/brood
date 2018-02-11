@@ -2,8 +2,13 @@ import { h, Component } from 'preact';
 import { Router, route } from 'preact-router';
 import Header from './header';
 import Home from '../routes/home';
-import Login from '../routes/login';
+import Realtime from '../routes/realtime';
+import Historic from '../routes/historic';
+import Control from '../routes/control';
+import Camera from '../routes/camera';
+import Settings from '../routes/settings';
 import Register from '../routes/register';
+import Login from '../routes/login';
 import { updateData } from '../actions';
 import store from '../store';
 
@@ -38,6 +43,11 @@ export default class App extends Component {
 				<Header />
 				<Router>
 					<ProtectedRoute component={Home} path="/" />
+          <ProtectedRoute component={Realtime} path="/realtime" />
+          <ProtectedRoute component={Historic} path="/historic" />
+          <ProtectedRoute component={Control} path="/control" />
+          <ProtectedRoute component={Camera} path="/camera" />
+          <ProtectedRoute component={Settings} path="/settings" />
 					<Login path="/login" />
 					<Register path="/register" />
 				</Router>
