@@ -10,15 +10,10 @@ import store from '../store';
 
 export default class TimePicker extends Component {
 
-  //shouldComponentUpdate = (e) => (!this.state.dragging);
-
   constructor(props){
     super(props);
     this.state = {
-      key: this.props.key,
-      start: this.props.start,
-      run_time: this.props.run_time,
-      dragging: false
+      key: this.props.key
     }
   }
 
@@ -27,35 +22,23 @@ export default class TimePicker extends Component {
   )
 
   onStartChange = (time) => {
-    this.setState({
-      start: time,
-      dragging: false
-    });
-    store.dispatch(sendMessage("time_change", this.state.key, this.state));
+    var ch = Object.assign(this.props, {start: time});
+    store.dispatch(sendMessage("time_change", this.state.key, ch));
   }
 
   onStartInput = (time) => {
-    this.setState({
-      start: time,
-      dragging: true
-    })
-    store.dispatch(sendMessage("time_change", this.state.key, this.state, false));
+    var ch = Object.assign(this.props, {start: time});
+    store.dispatch(sendMessage("time_change", this.state.key, ch, false));
   }
 
   onRunChange = (time) => {
-    this.setState({
-      run_time: time,
-      dragging: false
-    })
-    store.dispatch(sendMessage("time_change", this.state.key, this.state));
+    var ch = Object.assign(this.props, {run_time: time});
+    store.dispatch(sendMessage("time_change", this.state.key, ch));
   }
 
   onRunInput = (time) => {
-    this.setState({
-      run_time: time,
-      dragging: true
-    })
-    store.dispatch(sendMessage("time_change", this.state.key, this.state, false));
+    var ch = Object.assign(this.props, {run_time: time});
+    store.dispatch(sendMessage("time_change", this.state.key, ch, false));
   }
 
   render = ({ key, start, run_time }) => {

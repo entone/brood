@@ -5,11 +5,7 @@ defmodule Brood.Resource.Account do
 
   @account_collection Application.get_env(:brood, :account_collection)
 
-  defmodule Hardware do
-    defstruct id: nil, weather: [], energy: [], hvac: [], ieq: []
-  end
-
-  defstruct _id: nil, location_name: nil, email: nil, password: nil, kit_id: nil, zipcode: nil, climate_zone: nil, hardware: %{}
+  defstruct _id: nil, location_name: nil, email: nil, password: nil, kit_id: nil, zipcode: nil, climate_zone: nil, settings: %{}
 
   def register(%Account{} = account, password_conf) do
     case account.password == password_conf do
@@ -21,6 +17,16 @@ defmodule Brood.Resource.Account do
         :mongo_brood |> Mongo.insert_one(@account_collection, Map.from_struct(account), pool: DBConnection.Poolboy)
       _ -> :password_mismatch
     end
+  end
+
+  def update_setting(%Account{} = account, settings) when settings |> is_map do
+    settings = settings |> Enum.reduce(%{}, fn {k, v}, acc -> acc |> Map.put("settings.#{k}", v) end)
+    Logger.info "Updating Settings: #{inspect settings} for account: #{inspect account}"
+    :mongo_brood |> Mongo.update_one(@account_collection, %{_id: BSON.ObjectId.decode!(account._id)}, %{"$set": settings}, pool: DBConnection.Poolboy)
+  end
+
+  def update_setting(%Account{} = account, setting, value) do
+    update_setting(account, %{} |> Map.put(setting, value))
   end
 
   def authenticate(%Account{email: email, password: password} = auth) do

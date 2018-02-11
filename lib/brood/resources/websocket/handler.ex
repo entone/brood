@@ -58,6 +58,7 @@ defmodule Brood.Resource.WebSocket.Handler do
             |> IO.inspect
           {:ok, node} = Brood.NodeCommunicator.start_link(self(), account.kit_id)
           Process.send_after(self(), :open, 100)
+          Process.send_after(self(), :init_client, 100)
           state = %State{state | authenticated: true, account: account, node: node}
           {%Message{type: @authentication, payload: state}, state}
         {:error, reason} ->
@@ -103,7 +104,11 @@ defmodule Brood.Resource.WebSocket.Handler do
 
   def handle_message(%Message{type: "time_change"} = message, state) do
     Logger.info("Time Change: #{inspect message}")
+    id = message.id
+    st = message.payload |> Map.get("start")
+    rt = message.payload |> Map.get("run_time")
     state.node |> Brood.NodeCommunicator.request(message)
+    state.account |> Account.update_setting(%{"#{id}_start": st, "#{id}_run_time": rt})
     {%Message{message | payload: %{success: true}}, state}
   end
 
@@ -127,6 +132,11 @@ defmodule Brood.Resource.WebSocket.Handler do
   def websocket_info({:point, message}, req, state) do
     dp = message |> Map.drop([:device_pid, :histogram, :timer])
     {:reply, {:text, message |> Poison.encode!}, req, state}
+  end
+
+  def websocket_info(:init_client, req, state) do
+    mes = %Message{type: "CHANNEL_SETTINGS", payload: state.account.settings}
+    {:reply, {:text, mes |> Poison.encode!}, req, state}
   end
 
   def websocket_info(:open, req, state) do
