@@ -56,7 +56,7 @@ export default class Header extends Component {
 							{this.link("Realtime Data", "timeline", "/realtime")}
 							{this.link("Historic Data", "history", "/historic")}
 							{this.link("Override", "control_point", "/control")}
-							{this.link("Camera", "timeline", "/camera")}
+							{this.link("Camera", "camera", "/camera")}
 							{this.link("Settings", "timeline", "/settings")}
 						</List>
 					</Drawer.DrawerContent>
