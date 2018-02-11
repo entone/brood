@@ -84,7 +84,7 @@ export default class Home extends Component {
     </LayoutGrid.Cell>
   )
 
-  time = (title, color) => (
+  time = (title, key, color, state) => (
     <LayoutGrid.Cell cols="2" desktopCols="2" tabletCols="2" phoneCols="2">
       <Card style={{"background-color":color(.2)}}>
         <Card.Primary style={{"background-color":color(.4)}}>
@@ -93,15 +93,11 @@ export default class Home extends Component {
           </Card.Title>
         </Card.Primary>
         <Card.Media>
-          <TimePicker start={300} run_time={720} onChange={this.handleLowerLightTime} />
+          <TimePicker start={state[key+"_start"]} run_time={state[key+"_run_time"]} key={key} />
         </Card.Media>
       </Card>
     </LayoutGrid.Cell>
   )
-
-  handleLowerLightTime = (time) => {
-    console.log(time);
-  }
 
 	render = ({ ...state }, { text }) => {
 		return (
@@ -120,8 +116,8 @@ export default class Home extends Component {
             { this.actuator_group("Pumps", "pump", this.hues[7], state)}
             { this.actuator_group("Lights", "light", this.hues[7], state)}
             { this.actuator_group("Dose", "dose", this.hues[7], state)}
-            { this.time("Upper Lights", this.hues[8]) }
-            { this.time("Lower Lights", this.hues[8]) }
+            { this.time("Upper Lights", "light_upper", this.hues[8], state) }
+            { this.time("Lower Lights", "light_lower", this.hues[8], state) }
           </LayoutGrid.Inner>
         </LayoutGrid>
       </div>

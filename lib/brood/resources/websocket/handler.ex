@@ -101,6 +101,12 @@ defmodule Brood.Resource.WebSocket.Handler do
     {%Message{message | payload: %{success: true}}, state}
   end
 
+  def handle_message(%Message{type: "time_change"} = message, state) do
+    Logger.info("Time Change: #{inspect message}")
+    state.node |> Brood.NodeCommunicator.request(message)
+    {%Message{message | payload: %{success: true}}, state}
+  end
+
   def handle_message(%Message{type: @configure_touchstone} = mes, state) do
     state.node |> Brood.NodeCommunicator.request(mes)
     {%Message{mes | type: @configuration_state, payload: %{current_id: 1}}, state}
@@ -131,6 +137,11 @@ defmodule Brood.Resource.WebSocket.Handler do
 
   def websocket_info({:image, message}, req, state) do
     {:reply, {:binary, message}, req, state}
+  end
+
+  def websocket_info({:channel_settings, message}, req, state) do
+    Logger.info "WS Sending Settings: #{inspect message}"
+    {:reply, {:text, message}, req, state}
   end
 
   def websocket_terminate(_reason, req, state) do

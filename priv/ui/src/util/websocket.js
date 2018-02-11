@@ -1,4 +1,4 @@
-import { receiveAction, receiveDataPoint, receiveData, receiveImage } from '../actions';
+import { receiveAction, receiveDataPoint, receiveData, receiveImage, receiveChannelSettings } from '../actions';
 import * as types from '../types';
 import store from '../store';
 import { host } from '../common/config'
@@ -51,6 +51,9 @@ function message_handler(message){
       break;
     case types.RECEIVE_ACTION:
       action = receiveAction(data_p.action, data_p.payload);
+      break;
+    case types.RECEIVE_CHANNEL_SETTINGS:
+      action = receiveChannelSettings(data_p.payload);
       break;
   }
   if(action) store.dispatch(action);

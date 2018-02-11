@@ -16,27 +16,32 @@ let ACTIONS = {
     return Object.assign(state, update);
   },
 
-  SEND_MESSAGE: ({...state}, {id, message, payload}) => {
+  CHANNEL_SETTINGS: ({...state}, {payload}) => {
+    return Object.assign(state, payload);
+  },
+
+  SEND_MESSAGE: ({...state}, {id, message, payload, send_backend}) => {
     var update = {}
     switch(message){
       case "actuator":
         update[id] = payload;
         break;
+      case "time_change":
+        update[id+"_start"] = payload.start;
+        update[id+"_run_time"] = payload.run_time;
+        break;
       default:
         break;
     }
-		emit({type: message, id: id, payload: payload});
+		if(send_backend) emit({type: message, id: id, payload: payload});
 		return Object.assign(state, update);
   },
 
   ACTION: function({...state}, {action, payload}){
-    console.log(action);
-    console.log(payload);
     return state;
   },
 
 	DATA: function({...state}, data){
-    console.log(data);
     return state;
   },
 
@@ -65,7 +70,11 @@ const INITIAL = {
   water_temperature: [],
   doxy: [],
 	light_lower: 0,
+  light_lower_start: 0,
+  light_lower_run_time: 0,
 	light_upper: 0,
+  light_upper_start: 0,
+  light_upper_run_time: 0,
 	pump_upper: 0,
 	pump_lower: 0,
 	dose_upper: 0,

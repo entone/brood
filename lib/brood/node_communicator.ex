@@ -5,7 +5,7 @@ defmodule Brood.NodeCommunicator do
   @host Application.get_env(:brood, :mqtt_host)
   @port Application.get_env(:brood, :mqtt_port)
 
-  @end_points ["request", "response", "point", "image"]
+  @end_points ["request", "response", "point", "image", "channel_settings"]
 
   defmodule State do
     defstruct [:id, :parent]
@@ -54,6 +54,12 @@ defmodule Brood.NodeCommunicator do
   def on_publish(["node", client, "image"], message, %State{id: id} = state) when client == id do
     #Logger.debug "#{client} Image Received: #{inspect message}"
     send(state.parent, {:image, message})
+    {:ok, state}
+  end
+
+  def on_publish(["node", client, "channel_settings"], message, %State{id: id} = state) when client == id do
+    Logger.debug "#{client} Channel Settings Received: #{inspect message}"
+    send(state.parent, {:channel_settings, message})
     {:ok, state}
   end
 

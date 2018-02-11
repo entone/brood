@@ -28,12 +28,13 @@ export function updateData() {
 	};
 }
 
-export function sendMessage(type, id, payload) {
+export function sendMessage(type, id, payload, send_backend = true) {
 	return {
 		type: types.SEND_MESSAGE,
 		id: id,
 		message: type,
-		payload: payload
+		payload: payload,
+		send_backend: send_backend
 	};
 }
 
@@ -48,6 +49,13 @@ export function receiveAction(action, payload) {
 	return {
 		type: types.RECEIVE_ACTION,
 		action: action,
+		payload: payload
+	};
+}
+
+export function receiveChannelSettings(payload) {
+	return {
+		type: types.RECEIVE_CHANNEL_SETTINGS,
 		payload: payload
 	};
 }
