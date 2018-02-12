@@ -69,3 +69,9 @@ html, body{
 .page{
 	padding-top: 70px;
 }
+
+.current_value{
+	text-align: center;
+	padding: 20px;
+	font-size: 3em;
+}

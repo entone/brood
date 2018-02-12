@@ -67,9 +67,10 @@ export function receiveDataPoint(data_point) {
 	};
 }
 
-export function receiveData(data) {
+export function receiveData(measurement, data) {
 	return {
 		type: types.RECEIVE_DATA,
-		data: data
+		data: data,
+		measurement: measurement
 	};
 }

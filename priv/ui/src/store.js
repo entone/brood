@@ -41,8 +41,13 @@ let ACTIONS = {
     return state;
   },
 
-	DATA: function({...state}, data){
-    return state;
+	DATA: function({...state}, {measurement, data}){
+    console.log("Data: " + measurement);
+    console.log(data);
+    var update = {};
+    measurement = measurement.replace(".", "_");
+    update[measurement+"_data"] = data;
+    return Object.assign(state, update);
   },
 
 	DATA_POINT: function({...state}, data_point){
@@ -62,13 +67,21 @@ let ACTIONS = {
 
 const INITIAL = {
 	humidity: [],
+  humidity_data: [],
 	temperature: [],
+  temperature_data: [],
 	water_level_lower: [],
+  water_level_lower_data: [],
 	water_level_upper: [],
+  water_level_upper_data: [],
   ph: [],
+  ph_data: [],
   ec: [],
+  ec_ec_data: [],
   water_temperature: [],
+  water_temperature_data: [],
   doxy: [],
+  doxy_sat_data: [],
 	light_lower: 0,
   light_lower_start: 0,
   light_lower_run_time: 0,

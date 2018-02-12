@@ -36,10 +36,14 @@ config :brood, Brood.Scheduler,
 
 config :brood, Brood.DB.InfluxDB,
   host:      "influxdb",
-  pool:      [ max_overflow: 10, size: 5 ],
   port:      8086,
   scheme:    "http",
-  writer:    Instream.Writer.Line
+  writer:    Instream.Writer.Line,
+  pool:      [ max_overflow: 20, size: 20 ],
+  http_opts: [ recv_timeout: 50_000 ],
+  query_timeout: 50_000,
+  pool_timeout: 50_000,
+  timeout: 50_000
 
 config :guardian, Guardian,
   allowed_algos: ["HS512"],

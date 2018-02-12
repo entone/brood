@@ -25,7 +25,7 @@ defmodule CertTest.Mixfile do
       {:plug_rest, "~> 0.12.0"},
       {:guardian, "~> 0.14.4"},
       {:poison, "~> 3.0", override: true},
-      {:instream, "~> 0.15.0"},
+      {:instream, "~> 0.17"},
       {:mongodb, "~> 0.4.0"},
       {:poolboy, "~> 1.5"},
       {:gen_mqtt, "~> 0.3.1"},
