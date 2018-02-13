@@ -15,8 +15,8 @@ export default class Settings extends BasePage {
       <div className="settings page" >
         <LayoutGrid>
           <LayoutGrid.Inner>
-            { time("Upper Lights", "light_upper", this.hues[8], state) }
-            { time("Lower Lights", "light_lower", this.hues[8], state) }
+            { time("Upper Lights", "light_upper", this.hues.other, state) }
+            { time("Lower Lights", "light_lower", this.hues.other, state) }
           </LayoutGrid.Inner>
         </LayoutGrid>
       </div>

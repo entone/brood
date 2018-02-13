@@ -23,7 +23,9 @@ export default class Historic extends BasePage {
 			from: new Date(Date.now()-((24 * 60 * 60 * 1000))).toISOString(),
 			to: "_",
 			update: false,
-			chosenIndex: 2
+			chosenIndex: 2,
+			interval: null,
+			interval_time: 30000
 		}
 	}
 
@@ -48,6 +50,14 @@ export default class Historic extends BasePage {
 
 	componentDidMount = () => {
 		this.update_charts();
+		var interval = setInterval( () => this.get_data(),  this.state.interval_time)
+		this.setState({
+			interval: interval
+		})
+	}
+
+	componentWillUnmount = () => {
+		clearInterval(this.state.interval)
 	}
 
 	get_data = () => {
@@ -80,23 +90,29 @@ export default class Historic extends BasePage {
 						<Select.Item>3 Weeks</Select.Item>
 						<Select.Item>Month</Select.Item>
 				</Select>
+				&nbsp;&nbsp;refreshes every 30 seconds
         <LayoutGrid>
           <LayoutGrid.Inner>
 						<LayoutGrid.Cell cols="12" desktopCols="12" tabletCols="8" phoneCols="4">
-							<h2>PH</h2>
-							<LineGraph name="ph" color={this.hues[1]} />
-							<h2>Water Level Lower</h2>
-							<LineGraph name="water_level_lower" color={this.hues[2]} />
-							<h2>Water Level Upper</h2>
-							<LineGraph name="water_level_upper" color={this.hues[2]} />
-							<h2>Humidity</h2>
-							<LineGraph name="humidity" color={this.hues[3]} />
-							<h2>Temperature</h2>
-							<LineGraph name="temperature" color={this.hues[5]} />
-							<h2>Dissolved Oxygen</h2>
-							<LineGraph name="doxy_sat" color={this.hues[6]} />
-							<h2>EC</h2>
-							<LineGraph name="ec_ec" color={this.hues[7]} />
+							<LineGraph name="ph" title="PH" color={this.hues.ph} />
+						</LayoutGrid.Cell>
+						<LayoutGrid.Cell cols="12" desktopCols="12" tabletCols="8" phoneCols="4">
+							<LineGraph name="water_level_lower" title="Water Level Lower" color={this.hues.water_level_lower} />
+						</LayoutGrid.Cell>
+						<LayoutGrid.Cell cols="12" desktopCols="12" tabletCols="8" phoneCols="4">
+							<LineGraph name="water_level_upper" title="Water Level Upper" color={this.hues.water_level_upper} />
+						</LayoutGrid.Cell>
+						<LayoutGrid.Cell cols="12" desktopCols="12" tabletCols="8" phoneCols="4">
+							<LineGraph name="humidity" title="Humidity" color={this.hues.humidity} />
+						</LayoutGrid.Cell>
+						<LayoutGrid.Cell cols="12" desktopCols="12" tabletCols="8" phoneCols="4">
+							<LineGraph name="temperature" title="Temperature" color={this.hues.temperature} />
+						</LayoutGrid.Cell>
+						<LayoutGrid.Cell cols="12" desktopCols="12" tabletCols="8" phoneCols="4">
+							<LineGraph name="doxy_sat" title="Dissolved Oxygen" color={this.hues.doxy} />
+						</LayoutGrid.Cell>
+						<LayoutGrid.Cell cols="12" desktopCols="12" tabletCols="8" phoneCols="4">
+							<LineGraph name="ec_ec" title="EC" color={this.hues.ec} />
 						</LayoutGrid.Cell>
           </LayoutGrid.Inner>
         </LayoutGrid>

@@ -15,7 +15,7 @@ export default class Camera extends BasePage {
       <div className="camera page" >
         <LayoutGrid>
           <LayoutGrid.Inner>
-            { camera(this.hues[7], state) }
+            { camera(this.hues.other, state) }
           </LayoutGrid.Inner>
         </LayoutGrid>
       </div>

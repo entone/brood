@@ -46,7 +46,7 @@ defmodule Brood.Resource.Data.Query do
   end
 
   defp build_query(node, agg, measurement, from, to, bucket \\ "1m", tag \\ nil, value \\ nil) do
-    "SELECT #{agg |> aggregator()} FROM \"brood\".\"realtime\".\"#{measurement}\" WHERE node_id='#{node}' #{{tag, value} |> tags()} AND time >= #{from |> parse_time} AND time <= #{to |> parse_time} GROUP BY time(#{bucket}) fill(null)"
+    "SELECT #{agg |> aggregator()} FROM \"brood\".\"realtime\".\"#{measurement}\" WHERE node_id='#{node}' #{{tag, value} |> tags()} AND time >= #{from |> parse_time} AND time <= #{to |> parse_time} GROUP BY time(#{bucket}) fill(previous)"
   end
 
   defp aggregator("mean"), do: "MEAN(value)"

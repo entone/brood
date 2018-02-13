@@ -105,7 +105,7 @@ defmodule Brood.NodeCommunicator do
         [] ->
           Process.cancel_timer(state.open_handler)
           do_request(self(), state.id, %Message{type: @client_closed})
-          Process.send_after(self(), :close, 1000)
+          Process.send_after(self(), :close, 100)
           []
         list -> list
       end

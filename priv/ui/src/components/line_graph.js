@@ -1,4 +1,6 @@
 import { h, Component } from 'preact';
+import Card from 'preact-material-components/Card';
+import 'preact-material-components/Card/style.css';
 import * as d3 from 'd3';
 import { connect } from 'preact-redux';
 import * as actions from '../actions';
@@ -68,11 +70,20 @@ export default class LineGraph extends Component {
 
   };
 
-  render = ({ name, color }) => {
+  render = ({ name, title, color }) => {
     return (
-      <div id={name}>
-        <svg id={name+"-svg"}></svg>
-      </div>
+      <Card style={{"background-color": color(.2)}}>
+        <Card.Primary style={{"background-color": color(.5)}}>
+          <Card.Title style={{"color": color(0)}}>
+            {title}
+          </Card.Title>
+        </Card.Primary>
+        <Card.Media className='card-media' style={{"padding": "0px", "padding-top": "10px"}}>
+          <div id={name}>
+            <svg id={name+"-svg"}></svg>
+          </div>
+        </Card.Media>
+      </Card>
     );
   }
 }

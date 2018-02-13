@@ -15,9 +15,9 @@ export default class Control extends BasePage {
       <div className="control page" >
         <LayoutGrid>
           <LayoutGrid.Inner>
-            { actuator_group("Pumps", "pump", this.hues[7], state)}
-            { actuator_group("Lights", "light", this.hues[7], state)}
-            { actuator_group("Dose", "dose", this.hues[7], state)}
+            { actuator_group("Pumps", "pump", this.hues.control, state)}
+            { actuator_group("Lights", "light", this.hues.control, state)}
+            { actuator_group("Dose", "dose", this.hues.control, state)}
           </LayoutGrid.Inner>
         </LayoutGrid>
       </div>
