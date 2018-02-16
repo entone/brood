@@ -1,4 +1,4 @@
-import { receiveAction, receiveDataPoint, receiveData, receiveImage, receiveChannelSettings } from '../actions';
+import { receiveAction, receiveDataPoint, receiveData, receiveImage, receiveChannelSettings, receiveAuthentication } from '../actions';
 import * as types from '../types';
 import store from '../store';
 import { host } from '../common/config'
@@ -26,6 +26,7 @@ socket.onclose = close_handler;
 socket.onerror = error_handler;
 
 export const emit = (action) => socket.send(JSON.stringify(action));
+export const close = () => socket.close();
 
 function message_handler(message){
   var data_p, action;
@@ -43,6 +44,9 @@ function message_handler(message){
     data_p = {type: "NULL"};
   }
   switch(data_p.type){
+    case types.RECEIVE_AUTHENTICATION:
+      action = receiveAuthentication(data_p.payload);
+      break;
     case types.RECEIVE_DATA_POINT:
       action = receiveDataPoint(data_p.data_point);
       break;

@@ -7,6 +7,7 @@ import Historic from '../routes/historic';
 import Control from '../routes/control';
 import Camera from '../routes/camera';
 import Settings from '../routes/settings';
+import Account from '../routes/account';
 import Register from '../routes/register';
 import Login from '../routes/login';
 import { updateData } from '../actions';
@@ -23,7 +24,7 @@ class Redirect extends Component {
 }
 
 const ProtectedRoute = ({ component: Component, ...rest }) => (
-  store.getState().authenticated
+  store.getState().is_authenticated
 		? (<Component {...rest} />)
 		: (<Redirect to='/login' />)
 )
@@ -48,6 +49,7 @@ export default class App extends Component {
           <ProtectedRoute component={Control} path="/control" />
           <ProtectedRoute component={Camera} path="/camera" />
           <ProtectedRoute component={Settings} path="/settings" />
+          <ProtectedRoute component={Account} path="/account" />
 					<Login path="/login" />
 					<Register path="/register" />
 				</Router>

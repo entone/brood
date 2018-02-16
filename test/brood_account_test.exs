@@ -40,6 +40,16 @@ defmodule BroodAccountTest do
     end
   end
 
+  test "kits" do
+    conn = conn(:put, "/account/register", @params) |> put_req_header("content-type", "multipart/form-data")
+    result = Brood.HTTPRouter.call(conn, [])
+    assert result.status == 200
+    account = Account.find_user(%Account{email: @email})
+    Logger.info "#{inspect account}"
+    kit = Enum.at(account.kits, 0)
+    assert Map.get(kit, :id) == @kit_id
+  end
+
   test "login" do
     conn = conn(:put, "/account/register", @params) |> put_req_header("content-type", "multipart/form-data")
     _result = Brood.HTTPRouter.call(conn, [])

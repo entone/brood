@@ -5,7 +5,12 @@ defmodule Brood.Resource.Account do
 
   @account_collection Application.get_env(:brood, :account_collection)
 
-  defstruct _id: nil, location_name: nil, email: nil, password: nil, kit_id: nil, zipcode: nil, climate_zone: nil, settings: %{}
+  defmodule Kit do
+    @derive [Poison.Encoder]
+    defstruct [:id, :name]
+  end
+
+  defstruct _id: nil, email: nil, password: nil, kits: [], zipcode: nil, climate_zone: nil, settings: %{}
 
   def register(%Account{} = account, password_conf) do
     case account.password == password_conf do
@@ -14,9 +19,14 @@ defmodule Brood.Resource.Account do
           password: account.password |> Pbkdf2.hashpwsalt,
           _id: Mongo.object_id()
         }
-        :mongo_brood |> Mongo.insert_one(@account_collection, Map.from_struct(account), pool: DBConnection.Poolboy)
+        :mongo_brood |> Mongo.insert_one(@account_collection, Account.to_map(account), pool: DBConnection.Poolboy)
       _ -> :password_mismatch
     end
+  end
+
+  def update(%Account{} = account) do
+    :mongo_brood |> Mongo.find_one_and_replace(@account_collection, %{_id: account._id}, Account.to_map(account), pool: DBConnection.Poolboy)
+    account
   end
 
   def update_setting(%Account{} = account, settings) when settings |> is_map do
@@ -61,19 +71,42 @@ defmodule Brood.Resource.Account do
     :mongo_brood |> Mongo.delete_one(@account_collection, %{_id: account._id}, pool: DBConnection.Poolboy)
   end
 
+  def to_map(%Account{} = account) do
+    kits =
+      Enum.map(account.kits, fn kit ->
+        Map.from_struct(kit)
+      end)
+    account |> Map.from_struct() |> Map.put(:kits, kits)
+  end
+
   def delete(:no_account), do: :ok
 
   def parse_params(nil), do: :no_account
   def parse_params(params) do
+    kits = get_kits(params)
     %Account{}
-    |> Map.to_list()
-    |> Enum.reduce(%Account{},
-      fn({k, _}, acc) ->
-        case Map.fetch(params, Atom.to_string(k)) do
-          {:ok, v} -> %{acc | k => v}
-          :error -> acc
+    |> Map.keys()
+    |> Enum.reduce(%Account{kits: kits}, fn(k, acc) ->
+      case Map.get(params, Atom.to_string(k)) do
+        nil -> acc
+        v when k != :kits -> Map.put(acc, k, v)
+        v -> acc
+      end
+    end)
+  end
+
+  def get_kits(params) do
+    case Map.get(params, "kit_id") do
+      nil ->
+        case Map.get(params, "kits") do
+          nil -> []
+          vals ->
+            Enum.map(vals, fn(kit) ->
+              %Kit{id: Map.get(kit, "id"), name: Map.get(kit, "name")}
+            end)
         end
-      end)
+      other -> [%Kit{id: Map.get(params, "kit_id"), name: Map.get(params, "location_name")}]
+    end
   end
 
   def index() do
@@ -84,13 +117,13 @@ defmodule Brood.Resource.Account do
         unique: true
       },
       %{
-        key: %{location_name: "hashed"},
-        name: "location",
+        key: %{"kits.name" => "hashed"},
+        name: "kit_name",
         unique: false
       },
       %{
-        key: %{kit_id: "hashed"},
-        name: "kit",
+        key: %{"kits.id" => "hashed"},
+        name: "kit_id",
         unique: false
       },
       %{

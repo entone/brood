@@ -36,6 +36,7 @@ export default class Home extends BasePage {
         <LayoutGrid>
 					<h2>Current Readings</h2>
           <LayoutGrid.Inner>
+						{this.card("CO2", state.co2, this.hues.ph)}
 						{this.card("PH", state.ph, this.hues.ph)}
 						{this.card("Water Level Lower", state.water_level_lower, this.hues.water_level_lower)}
 						{this.card("Water Level Upper", state.water_level_upper, this.hues.water_level_upper)}

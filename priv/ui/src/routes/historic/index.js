@@ -15,8 +15,9 @@ import style from './style';
 @connect(reduce, actions)
 export default class Historic extends BasePage {
 
-	constructor(){
-		super();
+	constructor(props){
+		console.log(props);
+		super(props);
 		this.selections = [{bucket: "1m", from: .04}, {bucket: "5m", from: .25}, {bucket: "15m", from: 1}, {bucket: "1h", from: 7}, {bucket: "3h", from: 14}, {bucket: "3h", from: 21}, {bucket: "6h", from: 30}];
 		this.state = {
 			bucket: "1h",
@@ -25,7 +26,8 @@ export default class Historic extends BasePage {
 			update: false,
 			chosenIndex: 2,
 			interval: null,
-			interval_time: 30000
+			interval_time: 30000,
+			kit_id: props.kit_id
 		}
 	}
 
@@ -40,19 +42,20 @@ export default class Historic extends BasePage {
 		this.get_data();
 	}
 
-	shouldComponentUpdate = () => {
+	shouldComponentUpdate = ({...state}) => {
 		if(this.state.update){
-			this.setState({update: false})
+			this.setState({update: false, kit_id: state.kit_id})
 			return true;
 		}
 		return false;
 	}
 
-	componentDidMount = () => {
+	componentDidMount = ({...state}) => {
 		this.update_charts();
-		var interval = setInterval( () => this.get_data(),  this.state.interval_time)
+		var interval = setInterval( () => this.update_charts(),  this.state.interval_time)
 		this.setState({
-			interval: interval
+			interval: interval,
+			kit_id: state.kit_id
 		})
 	}
 
@@ -61,14 +64,15 @@ export default class Historic extends BasePage {
 	}
 
 	get_data = () => {
-		get({aggregator: "mean", measurement: "ph", from: this.state.from , to: this.state.to, bucket: this.state.bucket})
-		get({aggregator: "mean", measurement: "water_level_lower", from: this.state.from , to: this.state.to, bucket: this.state.bucket})
-		get({aggregator: "mean", measurement: "water_level_upper", from: this.state.from , to: this.state.to, bucket: this.state.bucket})
-		get({aggregator: "mean", measurement: "ec.ec", from: this.state.from , to: this.state.to, bucket: this.state.bucket})
-		get({aggregator: "mean", measurement: "doxy.sat", from: this.state.from , to: this.state.to, bucket: this.state.bucket})
-		get({aggregator: "mean", measurement: "water_temperature", from: this.state.from , to: this.state.to, bucket: this.state.bucket})
-		get({aggregator: "mean", measurement: "temperature", from: this.state.from , to: this.state.to, bucket: this.state.bucket})
-		get({aggregator: "mean", measurement: "humidity", from: this.state.from , to: this.state.to, bucket: this.state.bucket})
+		get({kit: this.state.kit_id, aggregator: "mean", measurement: "touchstone.co2", from: this.state.from , to: this.state.to, bucket: this.state.bucket})
+		get({kit: this.state.kit_id, aggregator: "mean", measurement: "ph", from: this.state.from , to: this.state.to, bucket: this.state.bucket})
+		get({kit: this.state.kit_id, aggregator: "mean", measurement: "water_level_lower", from: this.state.from , to: this.state.to, bucket: this.state.bucket})
+		get({kit: this.state.kit_id, aggregator: "mean", measurement: "water_level_upper", from: this.state.from , to: this.state.to, bucket: this.state.bucket})
+		get({kit: this.state.kit_id, aggregator: "mean", measurement: "ec.ec", from: this.state.from , to: this.state.to, bucket: this.state.bucket})
+		get({kit: this.state.kit_id, aggregator: "mean", measurement: "doxy.sat", from: this.state.from , to: this.state.to, bucket: this.state.bucket})
+		get({kit: this.state.kit_id, aggregator: "mean", measurement: "water_temperature", from: this.state.from , to: this.state.to, bucket: this.state.bucket})
+		get({kit: this.state.kit_id, aggregator: "mean", measurement: "touchstone.temperature", from: this.state.from , to: this.state.to, bucket: this.state.bucket})
+		get({kit: this.state.kit_id, aggregator: "mean", measurement: "touchstone.humidity", from: this.state.from , to: this.state.to, bucket: this.state.bucket})
 	}
 
 	render = ({ ...state }, { text }) => {
@@ -94,6 +98,9 @@ export default class Historic extends BasePage {
         <LayoutGrid>
           <LayoutGrid.Inner>
 						<LayoutGrid.Cell cols="12" desktopCols="12" tabletCols="8" phoneCols="4">
+							<LineGraph name="touchstone_co2" title="CO2" color={this.hues.ph} />
+						</LayoutGrid.Cell>
+						<LayoutGrid.Cell cols="12" desktopCols="12" tabletCols="8" phoneCols="4">
 							<LineGraph name="ph" title="PH" color={this.hues.ph} />
 						</LayoutGrid.Cell>
 						<LayoutGrid.Cell cols="12" desktopCols="12" tabletCols="8" phoneCols="4">
@@ -103,10 +110,10 @@ export default class Historic extends BasePage {
 							<LineGraph name="water_level_upper" title="Water Level Upper" color={this.hues.water_level_upper} />
 						</LayoutGrid.Cell>
 						<LayoutGrid.Cell cols="12" desktopCols="12" tabletCols="8" phoneCols="4">
-							<LineGraph name="humidity" title="Humidity" color={this.hues.humidity} />
+							<LineGraph name="touchstone_humidity" title="Humidity" color={this.hues.humidity} />
 						</LayoutGrid.Cell>
 						<LayoutGrid.Cell cols="12" desktopCols="12" tabletCols="8" phoneCols="4">
-							<LineGraph name="temperature" title="Temperature" color={this.hues.temperature} />
+							<LineGraph name="touchstone_temperature" title="Temperature" color={this.hues.temperature} />
 						</LayoutGrid.Cell>
 						<LayoutGrid.Cell cols="12" desktopCols="12" tabletCols="8" phoneCols="4">
 							<LineGraph name="doxy_sat" title="Dissolved Oxygen" color={this.hues.doxy} />

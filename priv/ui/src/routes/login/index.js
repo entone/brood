@@ -56,7 +56,7 @@ export default class Login extends Component {
           			</Card.Primary>
           			<Card.Media className='card-media'>
 									<form id="login" onsubmit={this.submit}>
-										<TextField type="text" name="email" placeholder="Email" fullwidth={true} />
+										<TextField type="email" name="email" placeholder="Email" fullwidth={true} />
 										<TextField type="password" name="password" placeholder="Password" fullwidth={true}/>
 										<br />
 										<Button raised={true}>Login</Button>

@@ -6,7 +6,7 @@ defmodule Brood.Resource.WebSocket.Handler do
 
   #Message Types
   @bearer "Bearer "
-  @authentication "authentication"
+  @authentication "AUTHENTICATION"
   @ping "ping"
   @configure_touchstone "configure_touchstone"
   @configuration_state "configuration_state"
@@ -28,7 +28,7 @@ defmodule Brood.Resource.WebSocket.Handler do
   end
 
   defmodule State do
-    defstruct [authenticated: false, node: nil, account: nil]
+    defstruct [authenticated: false, node: nil, account: nil, kit_id: nil]
   end
 
   def init(_, _req, _opts) do
@@ -55,9 +55,10 @@ defmodule Brood.Resource.WebSocket.Handler do
             |> Account.from_id
             |> Account.cleanse
             |> IO.inspect
-          {:ok, node} = start_node_communicator(account)
           Process.send_after(self(), :init_client, 100)
-          state = %State{state | authenticated: true, account: account, node: node}
+          kit_id = get_current_kit(account)
+          {:ok, node} = start_node_communicator(kit_id)
+          state = %State{state | authenticated: true, account: account, node: node, kit_id: kit_id}
           {%Message{type: @authentication, payload: state}, state}
         {:error, reason} ->
           Process.send_after(self(), :shutdown, 100)
@@ -66,9 +67,13 @@ defmodule Brood.Resource.WebSocket.Handler do
       {:reply, {:text, reply |> Poison.encode!}, req, state}
   end
 
-  def start_node_communicator(account) do
+  def get_current_kit(account) do
+    (Map.get(account, :kits) |> Enum.at(0)) |> Map.get(:id)
+  end
+
+  def start_node_communicator(kit_id) do
     node =
-      case Brood.NodeCommunicator.start(account.kit_id) do
+      case Brood.NodeCommunicator.start(kit_id) do
         {:ok, node} -> node
         {:error, {:already_started, node}} -> node
       end
@@ -123,6 +128,15 @@ defmodule Brood.Resource.WebSocket.Handler do
   def handle_message(%Message{type: @configure_touchstone} = mes, state) do
     state.node |> Brood.NodeCommunicator.request(mes)
     {%Message{mes | type: @configuration_state, payload: %{current_id: 1}}, state}
+  end
+
+  def handle_message(%Message{type: "CHANGE_KIT"} = message, state) do
+    Logger.info("Updating KIT: #{inspect message}")
+    Brood.NodeCommunicator.unregister_handler(state.node, self())
+    :timer.sleep(1000)
+    {:ok, node} = start_node_communicator("#{message.payload}")
+    state = %State{state | node: node}
+    {%Message{message | payload: %{success: true}}, state}
   end
 
   def handle_message(%Message{type: @touchstone_name} = mes, state) do

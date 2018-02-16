@@ -1,13 +1,24 @@
 import { createStore, applyMiddleware } from 'redux';
 import * as types from './types';
 import { sendMessage } from './actions';
-import { emit } from './util/websocket'
+import { emit, close } from './util/websocket'
 import { num_data_points } from './common/config'
 
 
 let ACTIONS = {
+
+  LOGOUT: ({...state}) => {
+    close();
+    return INITIAL;
+  },
+
+  KIT_ADDED: ({...state}, {account}) => {
+    var kits = {kits: account.account.kits};
+    return Object.assign(state, kits);
+  },
+
   AUTHENTICATED: ({...state}, {token}) => {
-    var authed = {authenticated: token};
+    var authed = {is_authenticated: token};
     return Object.assign(state, authed);
   },
 
@@ -18,6 +29,16 @@ let ACTIONS = {
 
   CHANNEL_SETTINGS: ({...state}, {payload}) => {
     return Object.assign(state, payload);
+  },
+
+  AUTHENTICATION: ({...state}, {payload}) => {
+    return Object.assign(state, {kits: payload.account.kits, kit_id: payload.account.kits[0].id});
+  },
+
+  CHANGE_KIT: ({...state}, {kit}) => {
+    console.log("Changing KIT: "+ kit);
+    emit({type: "CHANGE_KIT", payload: kit})
+    return Object.assign(state, {kit_id: kit});
   },
 
   SEND_MESSAGE: ({...state}, {id, message, payload, send_backend}) => {
@@ -66,6 +87,8 @@ let ACTIONS = {
 };
 
 const INITIAL = {
+  kits: [],
+  kit_id: null,
 	humidity: [],
   humidity_data: [],
 	temperature: [],
@@ -82,6 +105,8 @@ const INITIAL = {
   water_temperature_data: [],
   doxy: [],
   doxy_sat_data: [],
+  co2: [],
+  touchstone_co2_data: [],
 	light_lower: 0,
   light_lower_start: 0,
   light_lower_run_time: 0,
@@ -93,7 +118,7 @@ const INITIAL = {
 	dose_upper: 0,
 	dose_lower: 0,
   image: null,
-  authenticated: false,
+  is_authenticated: false,
 };
 
 export default createStore( (state, action) => (

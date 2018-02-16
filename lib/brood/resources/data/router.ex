@@ -12,10 +12,10 @@ defmodule Brood.Resource.Data.Router do
   plug :match
   plug :dispatch
 
-  resource "/:aggregator/:measurement/:tag/:value/:from/:to/:bucket", Data.Query
-  resource "/:aggregator/:measurement/:tag/:value/:from/:to", Data.Query
-  resource "/:aggregator/:measurement/:from/:to/:bucket", Data.Query
-  resource "/:aggregator/:measurement/:from/:to", Data.Query
+  resource "/:kit/:aggregator/:measurement/:tag/:value/:from/:to/:bucket", Data.Query
+  resource "/:kit/:aggregator/:measurement/:tag/:value/:from/:to", Data.Query
+  resource "/:kit/:aggregator/:measurement/:from/:to/:bucket", Data.Query
+  resource "/:kit/:aggregator/:measurement/:from/:to", Data.Query
 
   def unauthenticated(conn, params) do
     Logger.error "Unauthenticated: #{inspect conn}"

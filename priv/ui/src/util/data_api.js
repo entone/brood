@@ -22,7 +22,8 @@ function param(key, params){
 }
 
 function url_params(params){
-  return param("aggregator", params)
+  return param("kit", params)
+    + param("aggregator", params)
     + param("measurement", params)
     + param("tag", params)
     + param("value", params)
@@ -31,7 +32,7 @@ function url_params(params){
     + param("bucket", params)
 }
 
-//params: {aggregator: required, measurement: required, from: required, to: required, bucket: optional, tag: optional, value: optional}
+//params: {kit: required, aggregator: required, measurement: required, from: required, to: required, bucket: optional, tag: optional, value: optional}
 export const get = (params) => {
   fetch(uri + url_params(params), {
     cache: "no-cache",

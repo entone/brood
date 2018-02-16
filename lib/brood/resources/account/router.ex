@@ -11,6 +11,7 @@ defmodule Brood.Resource.Account.Router do
 
   resource "/register", Account.Register
   resource "/login", Account.Login
+  resource "/add_kit", Account.AddKit
 
   def sign(conn, account) do
     conn = Guardian.Plug.api_sign_in(conn, account)
@@ -24,7 +25,6 @@ defmodule Brood.Resource.Account.Router do
   end
 
   def response_body({conn, jwt}, account) do
-    #TODO get hardware info from DB
     {conn, %{success: jwt, account: account} |> Poison.encode!}
   end
 

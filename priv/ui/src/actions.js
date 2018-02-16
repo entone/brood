@@ -8,6 +8,19 @@ export function login(email, password){
 	};
 }
 
+export function logout(){
+	return {
+		type: types.LOGOUT,
+	};
+}
+
+export function kitAdded(account){
+	return {
+		type: types.KIT_ADDED,
+		account: account
+	};
+}
+
 export function authenticated(token){
 	return {
 		type: types.AUTHENTICATED,
@@ -19,6 +32,13 @@ export function auth_error(error){
 	return {
 		type: types.AUTH_ERROR,
 		error: error
+	};
+}
+
+export function changeKit(kit) {
+	return {
+		type: types.CHANGE_KIT,
+		kit: kit
 	};
 }
 
@@ -56,6 +76,13 @@ export function receiveAction(action, payload) {
 export function receiveChannelSettings(payload) {
 	return {
 		type: types.RECEIVE_CHANNEL_SETTINGS,
+		payload: payload
+	};
+}
+
+export function receiveAuthentication(payload) {
+	return {
+		type: types.RECEIVE_AUTHENTICATION,
 		payload: payload
 	};
 }

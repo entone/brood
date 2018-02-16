@@ -19,8 +19,7 @@ defmodule Brood.Resource.Data.Query do
 
   def to_json(conn, state) do
     account = Guardian.Plug.current_resource(conn)
-    #TODO get node_id from account
-    node_id = account.kit_id
+    node_id = Map.get(conn.params, "kit")
     body =
       conn.params
       |> get_query(node_id)

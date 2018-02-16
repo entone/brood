@@ -39,6 +39,12 @@ defmodule Brood.Application do
     [
       {:_, [
         {"/", Brood.Resource.UI.Index, []},
+        {"/realtime", Brood.Resource.UI.Index, []},
+        {"/historic", Brood.Resource.UI.Index, []},
+        {"/control", Brood.Resource.UI.Index, []},
+        {"/camera", Brood.Resource.UI.Index, []},
+        {"/settings", Brood.Resource.UI.Index, []},
+        {"/account", Brood.Resource.UI.Index, []},
         {"/login", Brood.Resource.UI.Index, []},
         {"/register", Brood.Resource.UI.Index, []},
         {"/ws", Brood.Resource.WebSocket.Handler, []},

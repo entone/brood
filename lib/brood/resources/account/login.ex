@@ -15,6 +15,7 @@ defmodule Brood.Resource.Account.Login do
   def from_form(conn, state) do
     with %Account{} = auth <- conn.params |> Account.parse_params,
       %Account{} = account <- auth |> Account.authenticate,
+      %Account{} = account <- account |> Account.update,
     do:
       conn
       |> Router.sign(account)
