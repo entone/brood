@@ -6,7 +6,7 @@ import Elevation from 'preact-material-components/Elevation';
 import 'preact-material-components/Elevation/style.css';
 import Actuator from './actuator';
 
-export default function actuator_group(title, name, color, state){
+export default function actuator_group(title, name, color, state, locked){
   return (
     <LayoutGrid.Cell cols="6" desktopCols="6" tabletCols="4" phoneCols="4">
       <Elevation z={6}>
@@ -14,7 +14,7 @@ export default function actuator_group(title, name, color, state){
           <Card.Primary style={{"background-color":color(.2)}}>
             <Card.Title>
               <LayoutGrid.Cell cols="12" desktopCols="12" tabletCols="8" phoneCols="4">
-                { actuator_card(title, state[name], name, color)}
+                { actuator_card(title, state[name], name, color, locked)}
               </LayoutGrid.Cell>
             </Card.Title>
           </Card.Primary>
@@ -24,10 +24,10 @@ export default function actuator_group(title, name, color, state){
   );
 };
 
-function actuator_card(title, value, name, color){
+function actuator_card(title, value, name, color, locked){
   return (
     <LayoutGrid.Cell cols="6" desktopCols="6" tabletCols="4" phoneCols="4">
-      <Actuator title={title} value={value} name={name} color={color} />
+      <Actuator title={title} value={value} name={name} color={color} locked={locked} />
     </LayoutGrid.Cell>
   )
 }

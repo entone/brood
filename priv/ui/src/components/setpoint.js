@@ -2,9 +2,9 @@ import LayoutGrid from 'preact-material-components/LayoutGrid';
 import 'preact-material-components/LayoutGrid/style.css';
 import Card from 'preact-material-components/Card';
 import 'preact-material-components/Card/style.css';
-import TimePicker from './time_picker';
+import PIDSetpoint from './pid_setpoint';
 
-export default function time(title, key, color, state, locked){
+export default function setpoint(title, key, range, step, color, state, locked, multiplier){
   return (
     <LayoutGrid.Cell cols="6" desktopCols="6" tabletCols="4" phoneCols="4">
       <Card style={{"background-color":color(.2)}}>
@@ -14,7 +14,7 @@ export default function time(title, key, color, state, locked){
           </Card.Title>
         </Card.Primary>
         <Card.Media>
-          <TimePicker locked={locked} start={state[key+"_start"]} run_time={state[key+"_run_time"]} key={key} />
+          <PIDSetpoint locked={locked} key={key} value={state[key+"_setpoint"]} range={range} step={step} multiplier={multiplier} />
         </Card.Media>
       </Card>
     </LayoutGrid.Cell>

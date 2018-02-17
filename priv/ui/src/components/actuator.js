@@ -12,11 +12,11 @@ export default class Actuator extends Component {
     store.dispatch(sendMessage("actuator", this.props.name, effect));
   }
 
-  render = ({ value, title, name, color }) => {
+  render = ({ value, title, name, color, locked }) => {
     var checked = value == "0" ? false : true;
     return (
       <div style={{"padding": "25px"}}>
-        <Switch id={name+"-switch"} checked={checked} onClick={this.switch}/>
+        <Switch disabled={locked} id={name+"-switch"} checked={checked} onClick={this.switch}/>
         <label style={{"padding": "10px"}} for={name+"-switch"}>{title}</label>
       </div>
     );

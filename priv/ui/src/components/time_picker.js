@@ -41,16 +41,16 @@ export default class TimePicker extends Component {
     store.dispatch(sendMessage("time_change", this.state.key, ch, false));
   }
 
-  render = ({ key, start, run_time }) => {
+  render = ({ key, start, run_time, locked }) => {
     if(start.constructor === Array) start = (start[0]*60)+start[1];
     return (
       <div>
         <span className={"start_at"}>Start at: </span><span>{this.pad(Math.floor(start/60))+":"+this.pad(start%60)}</span>
-        <Slider step={15} value={start} max={1440} onChange={this.onStartChange} onInput={this.onStartInput} />
+        <Slider disabled={locked} step={15} value={start} max={1440} onChange={this.onStartChange} onInput={this.onStartInput} />
         <br />
         <br />
         <span className={"run_for"}>Run For: </span><span>{this.pad(Math.floor(run_time/60))+":"+this.pad(run_time%60)} hours</span>
-        <Slider step={15} value={run_time} max={1440} onChange={this.onRunChange} onInput={this.onRunInput} />
+        <Slider disabled={locked} step={15} value={run_time} max={1440} onChange={this.onRunChange} onInput={this.onRunInput} />
       </div>
     );
   }

@@ -28,6 +28,8 @@ let ACTIONS = {
   },
 
   CHANNEL_SETTINGS: ({...state}, {payload}) => {
+    console.log("SETTINGS: ");
+    console.log(payload);
     return Object.assign(state, payload);
   },
 
@@ -51,6 +53,9 @@ let ACTIONS = {
         update[id+"_start"] = payload.start;
         update[id+"_run_time"] = payload.run_time;
         break;
+      case "setpoint_change":
+        update[id+"_setpoint"] = payload.value;
+        break;
       default:
         break;
     }
@@ -63,8 +68,7 @@ let ACTIONS = {
   },
 
 	DATA: function({...state}, {measurement, data}){
-    console.log("Data: " + measurement);
-    console.log(data);
+    console.log("Data Update: " + measurement);
     var update = {};
     measurement = measurement.replace(".", "_");
     update[measurement+"_data"] = data;
@@ -122,6 +126,12 @@ const INITIAL = {
 	chill_fan: 0,
   ph_dose: 0,
   nute_dose: 0,
+
+  co2_setpoint: 0,
+  temp_setpoint: 0,
+  humidity_setpoint: 0,
+  ph_setpoint: 0,
+  nute_setpoint: 0,
 
   image: null,
   is_authenticated: false,

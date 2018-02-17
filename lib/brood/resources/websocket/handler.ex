@@ -125,6 +125,15 @@ defmodule Brood.Resource.WebSocket.Handler do
     {%Message{message | payload: %{success: true}}, state}
   end
 
+  def handle_message(%Message{type: "setpoint_change"} = message, state) do
+    Logger.info("Setpoint Change: #{inspect message}")
+    id = message.id
+    val = message.payload |> Map.get("value")
+    state.node |> Brood.NodeCommunicator.request(message)
+    state.account |> Account.update_setting(%{"#{id}_setpoint": val})
+    {%Message{message | payload: %{success: true}}, state}
+  end
+
   def handle_message(%Message{type: @configure_touchstone} = mes, state) do
     state.node |> Brood.NodeCommunicator.request(mes)
     {%Message{mes | type: @configuration_state, payload: %{current_id: 1}}, state}
