@@ -36,14 +36,16 @@ export default class Home extends BasePage {
         <LayoutGrid>
 					<h2>Current Readings</h2>
           <LayoutGrid.Inner>
-						{this.card("CO2", state.co2, this.hues.ph)}
-						{this.card("PH", state.ph, this.hues.ph)}
-						{this.card("Water Level Lower", state.water_level_lower, this.hues.water_level_lower)}
-						{this.card("Water Level Upper", state.water_level_upper, this.hues.water_level_upper)}
 						{this.card("Humidity", state.humidity, this.hues.humidity)}
 						{this.card("Temperature", state.temperature, this.hues.temperature)}
+						{this.card("CO2", state.co2, this.hues.ph)}
+						{this.card("PM", state.pm, this.hues.pm)}
+						{this.card("VOC", state.voc, this.hues.voc)}
+
+						{this.card("PH", state.ph, this.hues.ph)}
 						{this.card("Dissolved Oxygen", state.doxy, this.hues.doxy, "sat")}
 						{this.card("EC", state.ec, this.hues.ec, "ec")}
+						{this.card("Water Level", state.water_level, this.hues.water_level)}
           </LayoutGrid.Inner>
         </LayoutGrid>
       </div>

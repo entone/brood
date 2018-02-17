@@ -35,6 +35,11 @@ html, body {
   -webkit-font-smoothing: antialiased;
 }
 
+div.historic-select{
+	margin-top: 10px;
+	margin-left: 30px;
+}
+
 span.pre-text{
 	font-size: 18px;
 	font-weight: bold;

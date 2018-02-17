@@ -8,13 +8,16 @@ export default class BasePage extends Component {
       ph: cs.interpolatePuBu,
       ec: cs.interpolateBuPu,
       doxy: cs.interpolateReds,
-      water_level_lower: cs.interpolateGnBu,
-      water_level_upper: cs.interpolateBuGn,
+      water_level: cs.interpolateGnBu,
       water_temperature: cs.interpolateOrRd,
       temperature: cs.interpolatePuRd,
       humidity: cs.interpolateGreys,
+      co2: cs.interpolateYlGnBu,
+      pm: cs.interpolateBuGn,
+      voc: cs.interpolateYlGn,
       control: cs.interpolateRdPu,
       other: cs.interpolatePuBuGn,
+      other1: cs.interpolateYlOrBr
     };
   }
 }

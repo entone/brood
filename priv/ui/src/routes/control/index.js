@@ -15,9 +15,13 @@ export default class Control extends BasePage {
       <div className="control page" >
         <LayoutGrid>
           <LayoutGrid.Inner>
-            { actuator_group("Pumps", "pump", this.hues.control, state)}
-            { actuator_group("Lights", "light", this.hues.control, state)}
-            { actuator_group("Dose", "dose", this.hues.control, state)}
+						{ actuator_group("Light", "light", this.hues.control, state)}
+            { actuator_group("CO2 Dispenser", "co2_dispenser", this.hues.control, state)}
+            { actuator_group("Dehumidifier", "dehumidifier", this.hues.control, state)}
+            { actuator_group("Chill Box", "chill_box", this.hues.control, state)}
+						{ actuator_group("Chill Fan", "chill_fan", this.hues.control, state)}
+						{ actuator_group("PH Dose", "ph_dose", this.hues.control, state)}
+						{ actuator_group("Nute Dose", "nute_dose", this.hues.control, state)}
           </LayoutGrid.Inner>
         </LayoutGrid>
       </div>

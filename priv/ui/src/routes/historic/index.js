@@ -23,10 +23,9 @@ export default class Historic extends BasePage {
 			bucket: "1h",
 			from: new Date(Date.now()-((24 * 60 * 60 * 1000))).toISOString(),
 			to: "_",
-			update: false,
 			chosenIndex: 2,
 			interval: null,
-			interval_time: 30000,
+			interval_time: 5000,
 			kit_id: props.kit_id
 		}
 	}
@@ -35,28 +34,19 @@ export default class Historic extends BasePage {
 		var config = this.selections[this.state.chosenIndex];
 		var from = new Date(Date.now()-((config.from * 24 * 60 * 60 * 1000))).toISOString()
 		this.setState({
-			update: true,
 			from: from,
 			bucket: config.bucket
 		});
-		this.get_data();
-	}
-
-	shouldComponentUpdate = ({...state}) => {
-		if(this.state.update){
-			this.setState({update: false, kit_id: state.kit_id})
-			return true;
-		}
-		return false;
+		if(this.state.kit_id) this.get_data();
 	}
 
 	componentDidMount = ({...state}) => {
-		this.update_charts();
-		var interval = setInterval( () => this.update_charts(),  this.state.interval_time)
+		var interval = setInterval( () => this.get_data(),  this.state.interval_time)
 		this.setState({
 			interval: interval,
 			kit_id: state.kit_id
 		})
+		this.update_charts();
 	}
 
 	componentWillUnmount = () => {
@@ -64,47 +54,64 @@ export default class Historic extends BasePage {
 	}
 
 	get_data = () => {
-		//get({kit: this.state.kit_id, aggregator: "mean", measurement: "touchstone.co2", from: this.state.from , to: this.state.to, bucket: this.state.bucket})
+		get({kit: this.state.kit_id, aggregator: "mean", measurement: "touchstone.temperature", from: this.state.from , to: this.state.to, bucket: this.state.bucket})
+		get({kit: this.state.kit_id, aggregator: "mean", measurement: "touchstone.humidity", from: this.state.from , to: this.state.to, bucket: this.state.bucket})
+		get({kit: this.state.kit_id, aggregator: "mean", measurement: "touchstone.co2", from: this.state.from , to: this.state.to, bucket: this.state.bucket})
+		get({kit: this.state.kit_id, aggregator: "mean", measurement: "touchstone.pm", from: this.state.from , to: this.state.to, bucket: this.state.bucket})
+		get({kit: this.state.kit_id, aggregator: "mean", measurement: "touchstone.voc", from: this.state.from , to: this.state.to, bucket: this.state.bucket})
 		get({kit: this.state.kit_id, aggregator: "mean", measurement: "ph", from: this.state.from , to: this.state.to, bucket: this.state.bucket})
-		get({kit: this.state.kit_id, aggregator: "mean", measurement: "water_level_lower", from: this.state.from , to: this.state.to, bucket: this.state.bucket})
-		get({kit: this.state.kit_id, aggregator: "mean", measurement: "water_level_upper", from: this.state.from , to: this.state.to, bucket: this.state.bucket})
+		get({kit: this.state.kit_id, aggregator: "mean", measurement: "water_level", from: this.state.from , to: this.state.to, bucket: this.state.bucket})
 		get({kit: this.state.kit_id, aggregator: "mean", measurement: "ec.ec", from: this.state.from , to: this.state.to, bucket: this.state.bucket})
 		get({kit: this.state.kit_id, aggregator: "mean", measurement: "doxy.sat", from: this.state.from , to: this.state.to, bucket: this.state.bucket})
 		get({kit: this.state.kit_id, aggregator: "mean", measurement: "water_temperature", from: this.state.from , to: this.state.to, bucket: this.state.bucket})
-		//get({kit: this.state.kit_id, aggregator: "mean", measurement: "touchstone.temperature", from: this.state.from , to: this.state.to, bucket: this.state.bucket})
-		//get({kit: this.state.kit_id, aggregator: "mean", measurement: "touchstone.humidity", from: this.state.from , to: this.state.to, bucket: this.state.bucket})
 	}
 
 	render = ({ ...state }, { text }) => {
+		if(state.kit_id != this.state.kit_id){
+			this.setState({kit_id: state.kit_id});
+			this.update_charts();
+		}
 		return (
       <div className="historic page" >
+				<div class="historic-select">
+					<span class="pre-text">Past:</span>
+					<Select
+						selectedIndex={this.state.chosenIndex}
+						onChange={(e)=>{
+							this.setState({
+								chosenIndex: e.selectedIndex
+							});
+							this.update_charts();
+						}}>
+							<Select.Item>Hour</Select.Item>
+							<Select.Item>6 Hours</Select.Item>
+							<Select.Item>Day</Select.Item>
+							<Select.Item>Week</Select.Item>
+							<Select.Item>2 Weeks</Select.Item>
+							<Select.Item>3 Weeks</Select.Item>
+							<Select.Item>Month</Select.Item>
+					</Select>
+					<span class="post-text">refreshes every 30 seconds</span>
+				</div>
         <LayoutGrid>
 					<LayoutGrid.Inner>
 						<LayoutGrid.Cell cols="12" desktopCols="12" tabletCols="8" phoneCols="4">
-							<span class="pre-text">Past:</span>
-							<Select id="time_selector"
-								selectedIndex={this.state.chosenIndex}
-								onChange={(e)=>{
-									this.setState({
-										chosenIndex: e.selectedIndex
-									});
-									this.update_charts();
-								}}>
-									<Select.Item>Hour</Select.Item>
-									<Select.Item>6 Hours</Select.Item>
-									<Select.Item>Day</Select.Item>
-									<Select.Item>Week</Select.Item>
-									<Select.Item>2 Weeks</Select.Item>
-									<Select.Item>3 Weeks</Select.Item>
-									<Select.Item>Month</Select.Item>
-							</Select>
-							<span class="post-text">refreshes every 30 seconds</span>
+							<LineGraph name="touchstone_co2" title="CO2" color={this.hues.co2} />
 						</LayoutGrid.Cell>
 						<LayoutGrid.Cell cols="12" desktopCols="12" tabletCols="8" phoneCols="4">
-							<LineGraph name="water_level_lower" title="Water Level Lower" color={this.hues.water_level_lower} />
+							<LineGraph name="touchstone_voc" title="VOC" color={this.hues.voc} />
 						</LayoutGrid.Cell>
 						<LayoutGrid.Cell cols="12" desktopCols="12" tabletCols="8" phoneCols="4">
-							<LineGraph name="water_level_upper" title="Water Level Upper" color={this.hues.water_level_upper} />
+							<LineGraph name="touchstone_pm" title="PM" color={this.hues.pm} />
+						</LayoutGrid.Cell>
+						<LayoutGrid.Cell cols="12" desktopCols="12" tabletCols="8" phoneCols="4">
+							<LineGraph name="touchstone_humidity" title="Humidity" color={this.hues.humidity} />
+						</LayoutGrid.Cell>
+						<LayoutGrid.Cell cols="12" desktopCols="12" tabletCols="8" phoneCols="4">
+							<LineGraph name="touchstone_temperature" title="Temperature" color={this.hues.temperature} />
+						</LayoutGrid.Cell>
+						<LayoutGrid.Cell cols="12" desktopCols="12" tabletCols="8" phoneCols="4">
+							<LineGraph name="water_level" title="Water Level" color={this.hues.water_level} />
 						</LayoutGrid.Cell>
 						<LayoutGrid.Cell cols="12" desktopCols="12" tabletCols="8" phoneCols="4">
 							<LineGraph name="ph" title="PH" color={this.hues.ph} />
@@ -115,15 +122,6 @@ export default class Historic extends BasePage {
 						<LayoutGrid.Cell cols="12" desktopCols="12" tabletCols="8" phoneCols="4">
 							<LineGraph name="ec_ec" title="EC" color={this.hues.ec} />
 						</LayoutGrid.Cell>
-						{/*<LayoutGrid.Cell cols="12" desktopCols="12" tabletCols="8" phoneCols="4">
-							<LineGraph name="touchstone_co2" title="CO2" color={this.hues.ph} />
-						</LayoutGrid.Cell>
-						<LayoutGrid.Cell cols="12" desktopCols="12" tabletCols="8" phoneCols="4">
-							<LineGraph name="touchstone_humidity" title="Humidity" color={this.hues.humidity} />
-						</LayoutGrid.Cell>
-						<LayoutGrid.Cell cols="12" desktopCols="12" tabletCols="8" phoneCols="4">
-							<LineGraph name="touchstone_temperature" title="Temperature" color={this.hues.temperature} />
-						</LayoutGrid.Cell>*/}
           </LayoutGrid.Inner>
         </LayoutGrid>
       </div>

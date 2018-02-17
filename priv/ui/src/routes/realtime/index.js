@@ -19,10 +19,12 @@ export default class Realtime extends BasePage {
             { sensor_card("EC", state.ec, "ec", "ec", this.hues.ec)}
             { sensor_card("Water Temperature", state.water_temperature, "water_temperature", "water_temperature", this.hues.water_temperature)}
             { sensor_card("DO", state.doxy, "doxy", "mg", this.hues.doxy)}
-            { sensor_card("Water Level Upper", state.water_level_upper, "water_level_upper", "water_level_upper", this.hues.water_level_upper)}
-            { sensor_card("Water Level Lower", state.water_level_lower, "water_level_lower", "water_level_lower", this.hues.water_level_lower)}
+            { sensor_card("Water Level", state.water_level, "water_level", "water_level", this.hues.water_level)}
             { sensor_card("Temperature", state.temperature, "temperature", "temperature", this.hues.temperature) }
             { sensor_card("Humidity", state.humidity, "humidity", "humidity", this.hues.humidity) }
+						{ sensor_card("CO2", state.co2, "co2", "co2", this.hues.co2) }
+            { sensor_card("PM", state.pm, "pm", "pm", this.hues.pm) }
+						{ sensor_card("VOC", state.voc, "voc", "voc", this.hues.voc) }
           </LayoutGrid.Inner>
         </LayoutGrid>
       </div>

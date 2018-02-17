@@ -30,7 +30,7 @@
     "d3-color": "^1.0.3",
     "d3-interpolate": "^1.1.6",
     "d3-scale": "^1.0.7",
-    "d3-scale-chromatic": "^1.1.1",
+    "d3-scale-chromatic": "^1.2.0",
     "d3-selection": "^1.2.0",
     "d3-transition": "^1.1.1",
     "pinkie-promise": "git+https://github.com/floatdrop/pinkie-promise.git",

@@ -11,17 +11,13 @@ export default function actuator_group(title, name, color, state){
     <LayoutGrid.Cell cols="6" desktopCols="6" tabletCols="4" phoneCols="4">
       <Elevation z={6}>
         <Card style={{"background-color":color(.2)}}>
-          <Card.Primary style={{"background-color":color(.4)}}>
+          <Card.Primary style={{"background-color":color(.2)}}>
             <Card.Title>
-              {title}
+              <LayoutGrid.Cell cols="12" desktopCols="12" tabletCols="8" phoneCols="4">
+                { actuator_card(title, state[name], name, color)}
+              </LayoutGrid.Cell>
             </Card.Title>
           </Card.Primary>
-          <Card.Media>
-            <LayoutGrid.Cell cols="12" desktopCols="12" tabletCols="8" phoneCols="4">
-              { actuator_card("Upper", state[name+"_upper"], name+"_upper", color)}
-              { actuator_card("Lower", state[name+"_lower"], name+"_lower", color)}
-            </LayoutGrid.Cell>
-          </Card.Media>
         </Card>
       </Elevation>
     </LayoutGrid.Cell>

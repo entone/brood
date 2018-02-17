@@ -45,7 +45,8 @@ export const get = (params) => {
   })
   .then(response => response.json())
   .then(data => {
-    var d = data.results[0].series[0].values || [];
+    var series = data.results[0].series || [{}]
+    var d = series[0].values || [];
     store.dispatch(receiveData(params.measurement, d))
   })
 }

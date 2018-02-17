@@ -9,7 +9,7 @@ import 'preact-material-components/Toolbar/style.css';
 import Select from 'preact-material-components/Select';
 import 'preact-material-components/Menu/style.css';
 import 'preact-material-components/Select/style.css';
-import {interpolateGreys} from 'd3-scale-chromatic';
+import {interpolateYlGnBu} from 'd3-scale-chromatic';
 import reduce from '../../reducers';
 import * as actions from '../../actions';
 import { route } from 'preact-router';
@@ -114,7 +114,7 @@ export default class Header extends Component {
 	render({...state}) {
 		return (
 			<div>
-        <Toolbar className="toolbar" fixed={true} style={{"background-color": interpolateGreys(.7)}}>
+        <Toolbar className="toolbar" fixed={true} style={{"background-color": interpolateYlGnBu(.4)}}>
           <Toolbar.Row>
             <Toolbar.Section align-start={true}>
               <Toolbar.Icon menu={state.is_authenticated} onClick={() => {
