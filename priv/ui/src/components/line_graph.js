@@ -18,8 +18,9 @@ export default class LineGraph extends Component {
   }
 
   shouldComponentUpdate = ({...state}) => {
-    if(state[this.props.name+"_data"][0] && this.state.data[0] !== state[this.props.name+"_data"][0]){
-      var data = state[this.props.name+"_data"];
+    var s_data = state[this.state.name+"_data"] || [[1, 1]];
+    if(s_data[0] && this.state.data[0] !== s_data[0]){
+      var data = s_data;
       console.log("Updating");
       this.setState({data: data});
       this.x.domain(d3.extent(data, function(d) { return new Date(d[0]); }));

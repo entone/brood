@@ -16,7 +16,6 @@ import style from './style';
 export default class Historic extends BasePage {
 
 	constructor(props){
-		console.log(props);
 		super(props);
 		this.selections = [{bucket: "1m", from: .04}, {bucket: "5m", from: .25}, {bucket: "15m", from: 1}, {bucket: "1h", from: 7}, {bucket: "3h", from: 14}, {bucket: "3h", from: 21}, {bucket: "6h", from: 30}];
 		this.state = {
@@ -25,7 +24,7 @@ export default class Historic extends BasePage {
 			to: "_",
 			chosenIndex: 2,
 			interval: null,
-			interval_time: 5000,
+			interval_time: 30000,
 			kit_id: props.kit_id
 		}
 	}
