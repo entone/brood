@@ -35,6 +35,18 @@ html, body {
   -webkit-font-smoothing: antialiased;
 }
 
+span.pre-text{
+	font-size: 18px;
+	font-weight: bold;
+	margin-right: 10px;
+}
+
+span.post-text{
+	font-size: 12px;
+	font-weight: bold;
+	margin-left: 10px;
+}
+
 * {
 	box-sizing: border-box;
 }

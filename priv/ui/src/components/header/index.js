@@ -55,23 +55,29 @@ export default class Header extends Component {
 		</List.LinkItem>
 	)
 
+	get_selected_index = (state) => {
+		return state.kits.findIndex( (kit) => kit.id == state.kit_id );
+	}
+
 	kit = (state) => {
 		if(state.is_authenticated){
 			return (
-				<Select
-					selectedIndex={this.state.chosenKit}
-					onChange={ (e)=> {
-						this.setState({
-							chosenKit: e.selectedIndex
-						});
-						store.dispatch(
-							actions.changeKit(e.selectedOptions[0].value)
-						);
-					}}>
-					{state.kits.map((kit, i) => (
-						<Select.Item value={kit.id}>{kit.name}</Select.Item>
-					))}
-				</Select>
+				<div>
+					<Select hintText={"Grow System"}
+						selectedIndex={this.state.chosenKit}
+						onChange={ (e)=> {
+							this.setState({
+								chosenKit: e.selectedIndex
+							});
+							store.dispatch(
+								actions.changeKit(e.selectedOptions[0].value)
+							);
+						}}>
+						{state.kits.map((kit, i) => (
+							<Select.Item value={kit.id}>{kit.name}</Select.Item>
+						))}
+					</Select>
+				</div>
 			)
 		}else{
 			return (<div></div>);

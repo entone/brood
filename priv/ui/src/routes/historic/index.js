@@ -64,44 +64,41 @@ export default class Historic extends BasePage {
 	}
 
 	get_data = () => {
-		get({kit: this.state.kit_id, aggregator: "mean", measurement: "touchstone.co2", from: this.state.from , to: this.state.to, bucket: this.state.bucket})
+		//get({kit: this.state.kit_id, aggregator: "mean", measurement: "touchstone.co2", from: this.state.from , to: this.state.to, bucket: this.state.bucket})
 		get({kit: this.state.kit_id, aggregator: "mean", measurement: "ph", from: this.state.from , to: this.state.to, bucket: this.state.bucket})
 		get({kit: this.state.kit_id, aggregator: "mean", measurement: "water_level_lower", from: this.state.from , to: this.state.to, bucket: this.state.bucket})
 		get({kit: this.state.kit_id, aggregator: "mean", measurement: "water_level_upper", from: this.state.from , to: this.state.to, bucket: this.state.bucket})
 		get({kit: this.state.kit_id, aggregator: "mean", measurement: "ec.ec", from: this.state.from , to: this.state.to, bucket: this.state.bucket})
 		get({kit: this.state.kit_id, aggregator: "mean", measurement: "doxy.sat", from: this.state.from , to: this.state.to, bucket: this.state.bucket})
 		get({kit: this.state.kit_id, aggregator: "mean", measurement: "water_temperature", from: this.state.from , to: this.state.to, bucket: this.state.bucket})
-		get({kit: this.state.kit_id, aggregator: "mean", measurement: "touchstone.temperature", from: this.state.from , to: this.state.to, bucket: this.state.bucket})
-		get({kit: this.state.kit_id, aggregator: "mean", measurement: "touchstone.humidity", from: this.state.from , to: this.state.to, bucket: this.state.bucket})
+		//get({kit: this.state.kit_id, aggregator: "mean", measurement: "touchstone.temperature", from: this.state.from , to: this.state.to, bucket: this.state.bucket})
+		//get({kit: this.state.kit_id, aggregator: "mean", measurement: "touchstone.humidity", from: this.state.from , to: this.state.to, bucket: this.state.bucket})
 	}
 
 	render = ({ ...state }, { text }) => {
 		return (
       <div className="historic page" >
-				<Select hintText="Past" id="time_selector"
-					selectedIndex={this.state.chosenIndex}
-					onChange={(e)=>{
-						this.setState({
-							chosenIndex: e.selectedIndex
-						});
-						this.update_charts();
-					}}>
-						<Select.Item>Hour</Select.Item>
-						<Select.Item>6 Hours</Select.Item>
-						<Select.Item>Day</Select.Item>
-						<Select.Item>Week</Select.Item>
-						<Select.Item>2 Weeks</Select.Item>
-						<Select.Item>3 Weeks</Select.Item>
-						<Select.Item>Month</Select.Item>
-				</Select>
-				&nbsp;&nbsp;refreshes every 30 seconds
         <LayoutGrid>
-          <LayoutGrid.Inner>
+					<LayoutGrid.Inner>
 						<LayoutGrid.Cell cols="12" desktopCols="12" tabletCols="8" phoneCols="4">
-							<LineGraph name="touchstone_co2" title="CO2" color={this.hues.ph} />
-						</LayoutGrid.Cell>
-						<LayoutGrid.Cell cols="12" desktopCols="12" tabletCols="8" phoneCols="4">
-							<LineGraph name="ph" title="PH" color={this.hues.ph} />
+							<span class="pre-text">Past:</span>
+							<Select id="time_selector"
+								selectedIndex={this.state.chosenIndex}
+								onChange={(e)=>{
+									this.setState({
+										chosenIndex: e.selectedIndex
+									});
+									this.update_charts();
+								}}>
+									<Select.Item>Hour</Select.Item>
+									<Select.Item>6 Hours</Select.Item>
+									<Select.Item>Day</Select.Item>
+									<Select.Item>Week</Select.Item>
+									<Select.Item>2 Weeks</Select.Item>
+									<Select.Item>3 Weeks</Select.Item>
+									<Select.Item>Month</Select.Item>
+							</Select>
+							<span class="post-text">refreshes every 30 seconds</span>
 						</LayoutGrid.Cell>
 						<LayoutGrid.Cell cols="12" desktopCols="12" tabletCols="8" phoneCols="4">
 							<LineGraph name="water_level_lower" title="Water Level Lower" color={this.hues.water_level_lower} />
@@ -110,10 +107,7 @@ export default class Historic extends BasePage {
 							<LineGraph name="water_level_upper" title="Water Level Upper" color={this.hues.water_level_upper} />
 						</LayoutGrid.Cell>
 						<LayoutGrid.Cell cols="12" desktopCols="12" tabletCols="8" phoneCols="4">
-							<LineGraph name="touchstone_humidity" title="Humidity" color={this.hues.humidity} />
-						</LayoutGrid.Cell>
-						<LayoutGrid.Cell cols="12" desktopCols="12" tabletCols="8" phoneCols="4">
-							<LineGraph name="touchstone_temperature" title="Temperature" color={this.hues.temperature} />
+							<LineGraph name="ph" title="PH" color={this.hues.ph} />
 						</LayoutGrid.Cell>
 						<LayoutGrid.Cell cols="12" desktopCols="12" tabletCols="8" phoneCols="4">
 							<LineGraph name="doxy_sat" title="Dissolved Oxygen" color={this.hues.doxy} />
@@ -121,6 +115,15 @@ export default class Historic extends BasePage {
 						<LayoutGrid.Cell cols="12" desktopCols="12" tabletCols="8" phoneCols="4">
 							<LineGraph name="ec_ec" title="EC" color={this.hues.ec} />
 						</LayoutGrid.Cell>
+						{/*<LayoutGrid.Cell cols="12" desktopCols="12" tabletCols="8" phoneCols="4">
+							<LineGraph name="touchstone_co2" title="CO2" color={this.hues.ph} />
+						</LayoutGrid.Cell>
+						<LayoutGrid.Cell cols="12" desktopCols="12" tabletCols="8" phoneCols="4">
+							<LineGraph name="touchstone_humidity" title="Humidity" color={this.hues.humidity} />
+						</LayoutGrid.Cell>
+						<LayoutGrid.Cell cols="12" desktopCols="12" tabletCols="8" phoneCols="4">
+							<LineGraph name="touchstone_temperature" title="Temperature" color={this.hues.temperature} />
+						</LayoutGrid.Cell>*/}
           </LayoutGrid.Inner>
         </LayoutGrid>
       </div>
