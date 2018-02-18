@@ -39,7 +39,7 @@ export default class Settings extends BasePage {
 						{ setpoint("Temperature", "temp", [20, 35], 1, this.hues.other, state, this.state.locked, 1) }
 						{ setpoint("Humidity", "humidity", [10, 90], 1, this.hues.other, state, this.state.locked, 1) }
 						{ setpoint("CO2", "co2", [4, 30], 1, this.hues.other, state, this.state.locked, 100) }
-						{ setpoint("Nutes", "nute", [4, 30], 1, this.hues.other, state, this.state.locked, 100) }
+						{ setpoint("Nutes", "nute", [1, 5], .1, this.hues.other, state, this.state.locked, 1) }
           </LayoutGrid.Inner>
         </LayoutGrid>
       </div>
