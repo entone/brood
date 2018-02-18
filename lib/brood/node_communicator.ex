@@ -26,8 +26,8 @@ defmodule Brood.NodeCommunicator do
   def start(node_id, state \\ %State{}) do
     client = "Server:#{node_id}"
     Logger.info "MQTT Client #{client} Connecting: #{@host}:#{@port}"
-    priv_dir = :code.priv_dir(:brood)
-    transport = {:ssl, [{:certfile, "#{priv_dir}/ssl/endless_summer.crt"}, {:keyfile, "#{priv_dir}/ssl/endless_summer.key"}]}
+    ssl_path = Application.get_env(:brood, :ssl_path)
+    transport = {:ssl, [{:certfile, "#{ssl_path}/endless_summer.crt"}, {:keyfile, "#{ssl_path}/endless_summer.key"}]}
     GenMQTT.start(__MODULE__, %State{id: node_id}, transport: transport, client: client, host: @host, port: @port, name: String.to_atom(client))
   end
 

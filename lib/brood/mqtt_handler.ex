@@ -9,8 +9,8 @@ defmodule Brood.MQTTHandler do
   def start_link do
     client = Node.self |> Atom.to_string
     Logger.info "MQTT Client #{client} Connecting: #{@host}:#{@port}"
-    priv_dir = :code.priv_dir(:brood)
-    transport = {:ssl, [{:certfile, "#{priv_dir}/ssl/endless_summer.crt"}, {:keyfile, "#{priv_dir}/ssl/endless_summer.key"}]}
+    ssl_path = Application.get_env(:brood, :ssl_path)
+    transport = {:ssl, [{:certfile, "#{ssl_path}/endless_summer.crt"}, {:keyfile, "#{ssl_path}/endless_summer.key"}]}
     GenMQTT.start_link(__MODULE__, nil, host: @host, port: @port, name: __MODULE__, client: client, transport: transport)
   end
 
