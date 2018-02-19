@@ -35,10 +35,11 @@ defmodule Brood.Resource.Account do
   def update_kits(%Account{} = account) do
     kits =
       Enum.map(account.kits, fn(kit) ->
-        res = :mongo_brood |> Mongo.update_one(@kit_collection, %{id: kit.id}, %{"$set": %{"id": kit.id, "name": kit.name}}, pool: DBConnection.Poolboy, upsert: true)
+        Logger.info "Updating: #{inspect kit}"
+        res = :mongo_brood |> Mongo.update_one(@kit_collection,%{id: kit.id}, %{"$set": %{"id": kit.id, "name": kit.name}}, pool: DBConnection.Poolboy, upsert: true)
         kit.id
       end)
-    %Account{account | kits: kits}
+    %Account{account | kits: Enum.uniq(kits)}
   end
 
   def authenticate(%Account{email: email, password: password} = auth) do
