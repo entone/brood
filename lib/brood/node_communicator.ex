@@ -2,6 +2,7 @@ defmodule Brood.NodeCommunicator do
   use GenMQTT
   require Logger
   alias Brood.Resource.WebSocket.Handler.Message
+  alias Brood.Resource.Account
 
   @host Application.get_env(:brood, :mqtt_host)
   @port Application.get_env(:brood, :mqtt_port)
@@ -11,8 +12,10 @@ defmodule Brood.NodeCommunicator do
 
   @end_points ["request", "response", "point", "image", "channel_settings"]
 
+  @kit_collection Application.get_env(:brood, :kit_collection)
+
   defmodule State do
-    defstruct [:id, handlers: [], open_handler: nil]
+    defstruct [:id, :name, :settings, handlers: [], open_handler: nil]
   end
 
   def register_handler(mod, pid) do
@@ -21,6 +24,18 @@ defmodule Brood.NodeCommunicator do
 
   def unregister_handler(mod, pid) do
     GenMQTT.cast(mod, {:unregister, pid})
+  end
+
+  def settings(mod) do
+    GenMQTT.call(mod, :settings)
+  end
+
+  def time_change(mod, %Message{} = message) do
+    GenMQTT.cast(mod, {:time_change, message})
+  end
+
+  def setpoint_change(mod, %Message{} = message) do
+    GenMQTT.cast(mod, {:setpoint_change, message})
   end
 
   def start(node_id, state \\ %State{}) do
@@ -39,8 +54,9 @@ defmodule Brood.NodeCommunicator do
       {"node/#{state.id}/#{ep}", 1}
     end)
     :ok = GenMQTT.subscribe(self(), topics)
+    kit = :mongo_brood |> Mongo.find_one(@kit_collection, %{id: state.id}, pool: DBConnection.Poolboy)
     oh = Process.send_after(self(), :open, 0)
-    {:ok, %State{state | open_handler: oh}}
+    {:ok, %State{state | open_handler: oh, name: Map.get(kit, "name"), settings: Map.get(kit, "settings", %{})}}
   end
 
   def on_subscribe(_subscriptions, state) do
@@ -94,6 +110,13 @@ defmodule Brood.NodeCommunicator do
     {:noreply, state}
   end
 
+  def handle_call(:settings, _from, state), do: {:reply, state.settings, state}
+
+  def handle_call({:request, payload}, _from, state) do
+    do_request(self(), state.id, payload)
+    {:reply, :ok, state}
+  end
+
   def handle_cast({:register, pid}, state) do
     {:noreply, %State{state | handlers: [pid | state.handlers] }}
   end
@@ -112,9 +135,33 @@ defmodule Brood.NodeCommunicator do
     {:noreply, %State{state | handlers: handlers}}
   end
 
-  def handle_call({:request, payload}, _from, state) do
-    do_request(self(), state.id, payload)
-    {:reply, :ok, state}
+  def handle_cast({:time_change, %Message{} = message}, state) do
+    Logger.info("Time Change: #{inspect message}")
+    id = message.id
+    st = message.payload |> Map.get("start")
+    rt = message.payload |> Map.get("run_time")
+    do_request(self(), state.id, message)
+    settings = %{"#{id}_start": st, "#{id}_run_time": rt}
+    update_settings(state.id, settings)
+    {:noreply, %State{state | settings: state.settings |> Map.merge(settings)}}
+  end
+
+  def handle_cast({:setpoint_change, %Message{} = message}, state) do
+    id = message.id
+    val = message.payload |> Map.get("value")
+    settings = %{"#{id}_setpoint": val}
+    do_request(self(), state.id, message)
+    update_settings(state.id, settings)
+    {:noreply, %State{state | settings: state.settings |> Map.merge(settings)}}
+  end
+
+  def update_settings(id, setting, value) do
+    update_settings(id, %{} |> Map.put(setting, value))
+  end
+  def update_settings(id, settings) when settings |> is_map do
+    settings = settings |> Enum.reduce(%{}, fn {k, v}, acc -> acc |> Map.put("settings.#{k}", v) end)
+    Logger.info "Updating Settings: #{inspect settings} for kit: #{inspect id}"
+    :mongo_brood |> Mongo.update_one(@kit_collection, %{id: id}, %{"$set": settings}, pool: DBConnection.Poolboy)
   end
 
   def do_request(pid, id, payload) do

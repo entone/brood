@@ -117,26 +117,14 @@ defmodule Brood.Resource.WebSocket.Handler do
 
   def handle_message(%Message{type: "time_change"} = message, state) do
     Logger.info("Time Change: #{inspect message}")
-    id = message.id
-    st = message.payload |> Map.get("start")
-    rt = message.payload |> Map.get("run_time")
-    state.node |> Brood.NodeCommunicator.request(message)
-    state.account |> Account.update_setting(%{"#{id}_start": st, "#{id}_run_time": rt})
+    state.node |> Brood.NodeCommunicator.time_change(message)
     {%Message{message | payload: %{success: true}}, state}
   end
 
   def handle_message(%Message{type: "setpoint_change"} = message, state) do
     Logger.info("Setpoint Change: #{inspect message}")
-    id = message.id
-    val = message.payload |> Map.get("value")
-    state.node |> Brood.NodeCommunicator.request(message)
-    state.account |> Account.update_setting(%{"#{id}_setpoint": val})
+    state.node |> Brood.NodeCommunicator.setpoint_change(message)
     {%Message{message | payload: %{success: true}}, state}
-  end
-
-  def handle_message(%Message{type: @configure_touchstone} = mes, state) do
-    state.node |> Brood.NodeCommunicator.request(mes)
-    {%Message{mes | type: @configuration_state, payload: %{current_id: 1}}, state}
   end
 
   def handle_message(%Message{type: "CHANGE_KIT"} = message, state) do
@@ -144,12 +132,9 @@ defmodule Brood.Resource.WebSocket.Handler do
     Brood.NodeCommunicator.unregister_handler(state.node, self())
     :timer.sleep(1000)
     {:ok, node} = start_node_communicator("#{message.payload}")
+    Process.send_after(self(), :init_client, 100) 
     state = %State{state | node: node}
     {%Message{message | payload: %{success: true}}, state}
-  end
-
-  def handle_message(%Message{type: @touchstone_name} = mes, state) do
-    {%Message{mes | type: @touchstone_saved, payload: %{current_id: mes.payload |> Map.get("id"), name: mes.payload |> Map.get("name")}}, state}
   end
 
   def handle_message(%Message{} = mes, state) do
@@ -166,7 +151,8 @@ defmodule Brood.Resource.WebSocket.Handler do
   end
 
   def websocket_info(:init_client, req, state) do
-    mes = %Message{type: "CHANNEL_SETTINGS", payload: state.account.settings}
+    settings = state.node |> Brood.NodeCommunicator.settings()
+    mes = %Message{type: "CHANNEL_SETTINGS", payload: settings}
     {:reply, {:text, mes |> Poison.encode!}, req, state}
   end
 

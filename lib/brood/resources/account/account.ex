@@ -4,13 +4,14 @@ defmodule Brood.Resource.Account do
   alias Comeonin.Pbkdf2
 
   @account_collection Application.get_env(:brood, :account_collection)
+  @kit_collection Application.get_env(:brood, :kit_collection)
 
   defmodule Kit do
     @derive [Poison.Encoder]
-    defstruct [:id, :name]
+    defstruct [:id, :name, :settings]
   end
 
-  defstruct _id: nil, email: nil, password: nil, kits: [], zipcode: nil, climate_zone: nil, settings: %{}
+  defstruct _id: nil, email: nil, password: nil, kits: [], zipcode: nil, climate_zone: nil
 
   def register(%Account{} = account, password_conf) do
     case account.password == password_conf do
@@ -19,24 +20,25 @@ defmodule Brood.Resource.Account do
           password: account.password |> Pbkdf2.hashpwsalt,
           _id: Mongo.object_id()
         }
-        :mongo_brood |> Mongo.insert_one(@account_collection, Account.to_map(account), pool: DBConnection.Poolboy)
+        account = Account.update_kits(account)
+        :mongo_brood |> Mongo.insert_one(@account_collection, Map.from_struct(account), pool: DBConnection.Poolboy)
       _ -> :password_mismatch
     end
   end
 
   def update(%Account{} = account) do
-    :mongo_brood |> Mongo.find_one_and_replace(@account_collection, %{_id: account._id}, Account.to_map(account), pool: DBConnection.Poolboy)
+    account = Account.update_kits(account)
+    :mongo_brood |> Mongo.find_one_and_replace(@account_collection, %{_id: account._id}, Map.from_struct(account), pool: DBConnection.Poolboy)
     account
   end
 
-  def update_setting(%Account{} = account, settings) when settings |> is_map do
-    settings = settings |> Enum.reduce(%{}, fn {k, v}, acc -> acc |> Map.put("settings.#{k}", v) end)
-    Logger.info "Updating Settings: #{inspect settings} for account: #{inspect account}"
-    :mongo_brood |> Mongo.update_one(@account_collection, %{_id: BSON.ObjectId.decode!(account._id)}, %{"$set": settings}, pool: DBConnection.Poolboy)
-  end
-
-  def update_setting(%Account{} = account, setting, value) do
-    update_setting(account, %{} |> Map.put(setting, value))
+  def update_kits(%Account{} = account) do
+    kits =
+      Enum.map(account.kits, fn(kit) ->
+        res = :mongo_brood |> Mongo.update_one(@kit_collection, %{id: kit.id}, %{"$set": %{"id": kit.id, "name": kit.name}}, pool: DBConnection.Poolboy, upsert: true)
+        kit.id
+      end)
+    %Account{account | kits: kits}
   end
 
   def authenticate(%Account{email: email, password: password} = auth) do
@@ -71,14 +73,6 @@ defmodule Brood.Resource.Account do
     :mongo_brood |> Mongo.delete_one(@account_collection, %{_id: account._id}, pool: DBConnection.Poolboy)
   end
 
-  def to_map(%Account{} = account) do
-    kits =
-      Enum.map(account.kits, fn kit ->
-        Map.from_struct(kit)
-      end)
-    account |> Map.from_struct() |> Map.put(:kits, kits)
-  end
-
   def delete(:no_account), do: :ok
 
   def parse_params(nil), do: :no_account
@@ -95,36 +89,39 @@ defmodule Brood.Resource.Account do
     end)
   end
 
+  def get_kits(%Account{} = account) do
+    docs = :mongo_brood |> Mongo.find(@kit_collection, %{id: %{"$in": account.kits}}, pool: DBConnection.Poolboy)
+    %Account{account | kits: Enum.map(docs, fn(doc) ->
+      %Kit{id: Map.get(doc, "id"), name: Map.get(doc, "name"), settings: Map.get(doc, "settings")}
+    end)}
+  end
+
   def get_kits(params) do
     case Map.get(params, "kit_id") do
       nil ->
         case Map.get(params, "kits") do
           nil -> []
           vals ->
-            Enum.map(vals, fn(kit) ->
-              %Kit{id: Map.get(kit, "id"), name: Map.get(kit, "name")}
+            docs = :mongo_brood |> Mongo.find(@kit_collection, %{id: %{"$in": vals}}, pool: DBConnection.Poolboy)
+            Enum.map(docs, fn(doc) ->
+              %Kit{id: Map.get(doc, "id"), name: Map.get(doc, "name"), settings: Map.get(doc, "settings")}
             end)
         end
-      other -> [%Kit{id: Map.get(params, "kit_id"), name: Map.get(params, "location_name")}]
+      other -> [%Kit{id: Map.get(params, "kit_id"), name: Map.get(params, "location_name"), settings: %{}}]
     end
   end
 
   def index() do
+    account_indexes()
+    kit_indexes()
+  end
+
+  def account_indexes() do
     indexes = [
       %{
         key: %{email: 1},
         name: "email",
         unique: true
-      },
-      %{
-        key: %{"kits.name" => "hashed"},
-        name: "kit_name",
-        unique: false
-      },
-      %{
-        key: %{"kits.id" => "hashed"},
-        name: "kit_id",
-        unique: false
       },
       %{
         key: %{zipcode: "hashed"},
@@ -139,5 +136,22 @@ defmodule Brood.Resource.Account do
     ]
     Logger.debug "Creating #{@account_collection} Indexes: #{inspect indexes}"
     :mongo_brood |> Mongo.command!([createIndexes: @account_collection, indexes: indexes], pool: DBConnection.Poolboy)
+  end
+
+  def kit_indexes() do
+    indexes = [
+      %{
+        key: %{id: 1},
+        name: "id",
+        unique: true
+      },
+      %{
+        key: %{"name" => "hashed"},
+        name: "name",
+        unique: false
+      }
+    ]
+    Logger.debug "Creating #{@kit_collection} Indexes: #{inspect indexes}"
+    :mongo_brood |> Mongo.command!([createIndexes: @kit_collection, indexes: indexes], pool: DBConnection.Poolboy)
   end
 end

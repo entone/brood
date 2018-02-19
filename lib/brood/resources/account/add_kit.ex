@@ -37,6 +37,7 @@ defmodule Brood.Resource.Account.AddKit do
     account =
       %Account{account | kits: [kit | account.kits]}
       |> Account.update()
+      |> Account.get_kits()
 
     Logger.info "Account: #{inspect account}"
     conn
