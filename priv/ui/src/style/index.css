@@ -19,6 +19,10 @@ html, body {
   src: url(/static/fonts/glyphicons-halflings-regular.woff2) format('woff2');
 }
 
+h2 span.h2_post{
+	font-size: 10px;
+}
+
 .material-icons {
   font-family: 'Material Icons';
   font-weight: normal;

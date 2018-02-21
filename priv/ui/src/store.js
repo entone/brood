@@ -127,9 +127,12 @@ const INITIAL = {
   ph_dose: 0,
   nute_dose: 0,
 
-  co2_setpoint: 0,
-  temp_setpoint: 0,
-  humidity_setpoint: 0,
+  night_co2_setpoint: 0,
+  day_co2_setpoint: 0,
+  night_temp_setpoint: 0,
+  day_temp_setpoint: 0,
+  night_humidity_setpoint: 0,
+  day_humidity_setpoint: 0,
   ph_setpoint: 0,
   nute_setpoint: 0,
 

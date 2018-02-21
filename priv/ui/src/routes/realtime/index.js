@@ -15,16 +15,16 @@ export default class Realtime extends BasePage {
       <div className="realtime page" >
         <LayoutGrid>
           <LayoutGrid.Inner>
-            { sensor_card("PH", state.ph, "ph", "ph", this.hues.ph)}
-            { sensor_card("EC", state.ec, "ec", "ec", this.hues.ec)}
-            { sensor_card("Water Temperature", state.water_temperature, "water_temperature", "water_temperature", this.hues.water_temperature)}
-            { sensor_card("DO", state.doxy, "doxy", "mg", this.hues.doxy)}
-            { sensor_card("Water Level", state.water_level, "water_level", "water_level", this.hues.water_level)}
-            { sensor_card("Temperature", state.temperature, "temperature", "temperature", this.hues.temperature) }
-            { sensor_card("Humidity", state.humidity, "humidity", "humidity", this.hues.humidity) }
-						{ sensor_card("CO2", state.co2, "co2", "co2", this.hues.co2) }
-            { sensor_card("PM", state.pm, "pm", "pm", this.hues.pm) }
-						{ sensor_card("VOC", state.voc, "voc", "voc", this.hues.voc) }
+            { sensor_card("PH", state.ph, "ph", "ph", this.ph)}
+            { sensor_card("Eletrical Conductivity", state.ec, "ec", "tds", this.ec)}
+            { sensor_card("Water Temperature", state.water_temperature, "water_temperature", "water_temperature", this.water_temperature)}
+            { sensor_card("Dissolved Oxygen", state.doxy, "doxy", "mg", this.doxy)}
+            { sensor_card("Water Level", state.water_level, "water_level", "water_level", this.water_level)}
+            { sensor_card("Temperature", state.temperature, "temperature", "temperature", this.temperature) }
+            { sensor_card("Humidity", state.humidity, "humidity", "humidity", this.humidity) }
+						{ sensor_card("CO2", state.co2, "co2", "co2", this.co2) }
+            { sensor_card("Particulate Matter 2.5", state.pm, "pm", "pm", this.pm) }
+						{ sensor_card("Volatile Organic Compounds", state.voc, "voc", "voc", this.voc) }
           </LayoutGrid.Inner>
         </LayoutGrid>
       </div>
