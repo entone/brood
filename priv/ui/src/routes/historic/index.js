@@ -60,9 +60,10 @@ export default class Historic extends BasePage {
 		get({kit: this.state.kit_id, aggregator: "mean", measurement: "touchstone.voc", from: this.state.from , to: this.state.to, bucket: this.state.bucket})
 		get({kit: this.state.kit_id, aggregator: "mean", measurement: "ph", from: this.state.from , to: this.state.to, bucket: this.state.bucket})
 		get({kit: this.state.kit_id, aggregator: "mean", measurement: "water_level", from: this.state.from , to: this.state.to, bucket: this.state.bucket})
-		get({kit: this.state.kit_id, aggregator: "mean", measurement: "ec.ec", from: this.state.from , to: this.state.to, bucket: this.state.bucket})
-		get({kit: this.state.kit_id, aggregator: "mean", measurement: "doxy.sat", from: this.state.from , to: this.state.to, bucket: this.state.bucket})
+		get({kit: this.state.kit_id, aggregator: "mean", measurement: "ec.tds", from: this.state.from , to: this.state.to, bucket: this.state.bucket})
+		get({kit: this.state.kit_id, aggregator: "mean", measurement: "doxy.mg", from: this.state.from , to: this.state.to, bucket: this.state.bucket})
 		get({kit: this.state.kit_id, aggregator: "mean", measurement: "water_temperature", from: this.state.from , to: this.state.to, bucket: this.state.bucket})
+		get({kit: this.state.kit_id, aggregator: "mean", measurement: "water_level", from: this.state.from , to: this.state.to, bucket: this.state.bucket})
 	}
 
 	render = ({ ...state }, { text }) => {
@@ -95,31 +96,34 @@ export default class Historic extends BasePage {
         <LayoutGrid>
 					<LayoutGrid.Inner>
 						<LayoutGrid.Cell cols="12" desktopCols="12" tabletCols="8" phoneCols="4">
-							<LineGraph name="touchstone_co2" title="CO2" color={this.hues.co2} />
+							<LineGraph name="ph" title="PH" config={this.ph} />
 						</LayoutGrid.Cell>
 						<LayoutGrid.Cell cols="12" desktopCols="12" tabletCols="8" phoneCols="4">
-							<LineGraph name="touchstone_voc" title="VOC" color={this.hues.voc} />
+							<LineGraph name="ec_tds" title="Electrical Conductivity" config={this.ec} />
+							<LayoutGrid.Cell cols="12" desktopCols="12" tabletCols="8" phoneCols="4">
+						</LayoutGrid.Cell>
+							<LineGraph name="water_temperature" title="Water Temperature" config={this.water_temperature} />
 						</LayoutGrid.Cell>
 						<LayoutGrid.Cell cols="12" desktopCols="12" tabletCols="8" phoneCols="4">
-							<LineGraph name="touchstone_pm" title="PM" color={this.hues.pm} />
+							<LineGraph name="doxy_mg" title="Dissolved Oxygen" config={this.doxy} />
 						</LayoutGrid.Cell>
 						<LayoutGrid.Cell cols="12" desktopCols="12" tabletCols="8" phoneCols="4">
-							<LineGraph name="touchstone_humidity" title="Humidity" color={this.hues.humidity} />
+							<LineGraph name="water_level" title="Water Level" config={this.water_level} />
 						</LayoutGrid.Cell>
 						<LayoutGrid.Cell cols="12" desktopCols="12" tabletCols="8" phoneCols="4">
-							<LineGraph name="touchstone_temperature" title="Temperature" color={this.hues.temperature} />
+							<LineGraph name="touchstone_temperature" title="Temperature" config={this.temperature} />
 						</LayoutGrid.Cell>
 						<LayoutGrid.Cell cols="12" desktopCols="12" tabletCols="8" phoneCols="4">
-							<LineGraph name="water_level" title="Water Level" color={this.hues.water_level} />
+							<LineGraph name="touchstone_humidity" title="Humidity" config={this.humidity} />
 						</LayoutGrid.Cell>
 						<LayoutGrid.Cell cols="12" desktopCols="12" tabletCols="8" phoneCols="4">
-							<LineGraph name="ph" title="PH" color={this.hues.ph} />
+							<LineGraph name="touchstone_co2" title="CO2" config={this.co2} />
 						</LayoutGrid.Cell>
 						<LayoutGrid.Cell cols="12" desktopCols="12" tabletCols="8" phoneCols="4">
-							<LineGraph name="doxy_sat" title="Dissolved Oxygen" color={this.hues.doxy} />
+							<LineGraph name="touchstone_pm" title="Particulate Matter 2.5" config={this.pm} />
 						</LayoutGrid.Cell>
 						<LayoutGrid.Cell cols="12" desktopCols="12" tabletCols="8" phoneCols="4">
-							<LineGraph name="ec_ec" title="EC" color={this.hues.ec} />
+							<LineGraph name="touchstone_voc" title="Volatile Organic Compounds" config={this.voc} />
 						</LayoutGrid.Cell>
           </LayoutGrid.Inner>
         </LayoutGrid>

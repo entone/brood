@@ -51,6 +51,7 @@ export default class LineGraph extends Component {
 
     this.x_axis = d3.axisBottom(this.x);
     this.y_axis = d3.axisLeft(this.y);
+    this.y_axis.tickFormat((val) => val+""+this.props.config.unit);
 
     this.line = d3.line()
       .x(d => this.x( new Date(d[0]) ))
@@ -64,17 +65,17 @@ export default class LineGraph extends Component {
 
     var paths = this.svg.append("g");
     this.path = paths.append('path')
-      .style('stroke', this.props.color(1))
+      .style('stroke', this.props.config.color(1))
       .style('stroke-width', 2)
       .style('fill', 'none')
 
   };
 
-  render = ({ name, title, color }) => {
+  render = ({ name, title, config }) => {
     return (
-      <Card style={{"background-color": color(.2)}}>
-        <Card.Primary style={{"background-color": color(.5)}}>
-          <Card.Title style={{"color": color(0)}}>
+      <Card style={{"background-color": config.color(.2)}}>
+        <Card.Primary style={{"background-color": config.color(.5)}}>
+          <Card.Title style={{"color": config.color(0)}}>
             {title}
           </Card.Title>
         </Card.Primary>
